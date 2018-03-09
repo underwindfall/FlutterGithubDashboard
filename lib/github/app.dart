@@ -3,15 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 
+import 'home.dart';
+
 class GithubDashBoardApp extends StatefulWidget {
 
 
   @override
-  _GithubDashBoardAppState createState() => new _GithubDashBoardAppState();
+  GithubDashBoardAppState createState() => new GithubDashBoardAppState();
 
 }
 
-class _GithubDashBoardAppState extends State<GithubDashBoardApp> {
+class GithubDashBoardAppState extends State<GithubDashBoardApp> {
 
   double _timeDilation = 1.0;
 
@@ -25,13 +27,22 @@ class _GithubDashBoardAppState extends State<GithubDashBoardApp> {
 
   @override
   void dispose() {
-
+    _timeDilationTimer?.cancel();
+    _timeDilationTimer = null;
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    return new MaterialApp(
+      title: 'Github DashBoard',
+      theme: new ThemeData(
+        primaryColor: Colors.blue,
+        primarySwatch: Colors.blue,
+      ),
+      home: new GithubDashBoardHome(),
+    );
   }
 
 }
