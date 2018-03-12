@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
-import 'package:githubdashboard/github/model/github_types.dart';
+import 'package:githubdashboard/github/model/repo.dart';
 
 enum IndicatorType { overscroll, refresh }
 
@@ -26,26 +25,21 @@ class GithubRepoState extends State<GithubRepo> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
-
-  UserModel mUserModel;
-
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
+  final GithubApi api = new GithubApi();
+  UserModel mUserModel;
+  List<RepoModel> mRepos = [];
 
-//  String get currentAuthor=>
-
-  //todo 动态话数组
-  static final List<String> _items = <String>[
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'
-  ];
+  String get userName => widget.name;
 
 
   @override
   void initState() {
     super.initState();
+    fetchData(userName);
     _scaffoldKey =
-    new GlobalKey<ScaffoldState>(debugLabel: 'Search Name ${widget.name}');
-//    getUserData(widget.name);
+    new GlobalKey<ScaffoldState>(debugLabel: 'Search Name $userName');
   }
 
 
@@ -73,26 +67,39 @@ class GithubRepoState extends State<GithubRepo> {
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-        title: new Text('Github Repo'),
+        title: new Text(
+            mUserModel == null ? 'Github Repo' : '${mUserModel
+                .name} \'s Github Repo'),
         actions: <Widget>[
+          new IconButton(
+              icon: new CircleAvatar(
+                child: new Image.network(
+                  (mUserModel == null || mUserModel.avatarUrl.isEmpty)
+                      ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
+                      : mUserModel.avatarUrl,
+                  width: 20.0,
+                  height: 20.0,
+                ),
+              ),
+              onPressed: null),
           new IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: 'Refresh',
               onPressed: () {
-//                _refreshIndicatorKey.currentState.show();
-                getUserData('underwindfall');
-              })
+                _refreshIndicatorKey.currentState.show();
+                fetchData(mUserModel.name);
+              }),
+
         ],
       ), //appbar
       body: new RefreshIndicator(
         key: _refreshIndicatorKey,
-//        onRefresh: _handleRefresh,
         onRefresh: _handleRefresh,
         child: new ListView.builder(
             padding: kMaterialListPadding,
-            itemCount: _items.length,
+            itemCount: mRepos.length,
             itemBuilder: (BuildContext context, int index) {
-              final String item = _items[index];
+              final String item = mRepos[index].name;
               return new ListTile(
                 isThreeLine: false,
                 leading: new CircleAvatar(
@@ -103,11 +110,7 @@ class GithubRepoState extends State<GithubRepo> {
                   ),
                 ),
                 title: new Text(
-                  generateWordPairs()
-                      .take(1)
-                      .toSet()
-                      .first
-                      .asPascalCase,
+                  item,
                   style: _biggerFont,
                 ),
               );
@@ -119,37 +122,30 @@ class GithubRepoState extends State<GithubRepo> {
   }
 
 
-  void getUserData(String name) {
-//    var httpClient = new HttpClient();
-//    var url ='$BASE_URL/users/underwindfall?access_token=$TOKEN';
-//    var request = await httpClient.getUrl(Uri.parse(url));
-//    var response = await request.close();
-//    var responseBody = await response.transform(UTF8.decoder).join();
-//    var data = JSON.decode(responseBody);
-//    var result = data['id'];
-//    await GithubApi.getUser(name).then((value) {
-//      debugPrint(value.name);
-//      setUserModel(value);
-//      debugPrint(value.name);
-//    });
-
-    new GithubApi().getUser('underwindfall').then((model) {
+  fetchData(String name) {
+    api.getUser(name).then((model) {
       setState(() {
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(
-            content: new Text(model.name)
-        ));
+        if (model != null) {
+          mUserModel = model;
+        } else {
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              content: new Text('fetch user error')
+          ));
+        }
+      });
+    });
+    api.getRepos(name).then((repoList) {
+      setState(() {
+        if (repoList != null) {
+          mRepos = repoList;
+        } else {
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              content: new Text('fetch repos error')
+          ));
+        }
       });
     });
   }
 
-  void setUserModel(UserModel model) {
-    setState(() {
-      debugPrint(model.name);
-      mUserModel = model;
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(
-          content: new Text(mUserModel.name)
-      ));
-    });
-  }
 
 }
