@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'repo.dart';
+
 class GithubDashBoardHome extends StatefulWidget {
   const GithubDashBoardHome({
     Key key
   }) :super(key: key);
-
 
   @override
   GithubDashBoardHomeState createState() => new GithubDashBoardHomeState();
@@ -33,13 +34,21 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
-      showInSnackBar('Sucess input ${searchData.name} waiting for search ');
+//      showInSnackBar('Sucess input ${searchData.name} waiting for search ');
     }
   }
 
   String _validateSearch(String value) {
     if (value.isEmpty) {
       return 'Name is required';
+    } else {
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              settings: const RouteSettings(name: GithubRepo.routeName),
+              builder: (context) {
+                return new GithubRepo(name: value);
+              })
+      );
     }
     return null;
   }
