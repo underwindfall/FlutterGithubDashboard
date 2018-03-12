@@ -99,7 +99,8 @@ class GithubRepoState extends State<GithubRepo> {
         child: new ListView.builder(
             padding: kMaterialListPadding,
             itemCount: mRepos.length,
-            itemBuilder: (BuildContext context, int index) {
+          itemBuilder: _buildReopItem,
+          /*itemBuilder: (BuildContext context, int index) {
               final String item = mRepos[index].name;
               return new ListTile(
                 isThreeLine: false,
@@ -115,11 +116,35 @@ class GithubRepoState extends State<GithubRepo> {
                   style: _biggerFont,
                 ),
               );
-            }
+            }*/
         ),
 
       ),
     );
+  }
+
+  _buildReopItem(BuildContext context, int index) {
+    final String item = mRepos[index].name;
+    var repoContent = new ListTile(
+      isThreeLine: false,
+      leading: new CircleAvatar(
+        child: new Image.network(
+          'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png',
+          width: 20.0,
+          height: 20.0,
+        ),
+      ),
+      title: new Text(
+        item,
+        style: _biggerFont,
+      ),
+    );
+
+    var repoItem = new GestureDetector(
+      onTap: () => print('test $index'),
+      child: repoContent,
+    );
+    return repoItem;
   }
 
 

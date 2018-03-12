@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:githubdashboard/github/constant/constant.dart';
 import 'package:githubdashboard/github/constant/token.dart';
 import 'package:githubdashboard/github/model/repo.dart';
+import 'package:githubdashboard/github/model/repo_detail.dart';
 import 'package:githubdashboard/github/model/user.dart';
 
 class GithubApi {
@@ -32,6 +33,13 @@ class GithubApi {
       repoList.add(new RepoModel.fromJson(repoJSON));
     }
     return repoList;
+  }
+
+  Future<RepoDetailModel> getRepoDetail(String repoOwner,
+      String repoName) async {
+    var url = '$BASE_URL/repos/$repoOwner/$repoName?access_token=$TOKEN';
+    var decodedJSON = await _getDecodedJson(url);
+    return new RepoDetailModel.fromJson(decodedJSON);
   }
 
 
