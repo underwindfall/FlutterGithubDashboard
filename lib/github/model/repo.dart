@@ -1,3 +1,4 @@
+import 'package:githubdashboard/github/model/owner.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'repo.g.dart';
@@ -14,9 +15,12 @@ class RepoModel extends Object with _$RepoModelSerializerMixin {
   int starCount;
   @JsonKey(name: 'html_url')
   String htmlUrl;
+  @JsonKey(name: 'owner')
+  OwnerModel ownerModel;
 
 
-  RepoModel(this.id, this.name, this.language, this.starCount, this.htmlUrl);
+  RepoModel(this.id, this.name, this.language, this.starCount, this.htmlUrl,
+      this.ownerModel);
 
   factory RepoModel.fromJson(Map<String, dynamic> json)=>
       _$RepoModelFromJson(json);
