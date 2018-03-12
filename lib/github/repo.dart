@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
+import 'package:githubdashboard/github/repo_detail.dart';
 
 enum IndicatorType { overscroll, refresh }
 
@@ -124,7 +125,7 @@ class GithubRepoState extends State<GithubRepo> {
   }
 
   _buildReopItem(BuildContext context, int index) {
-    final String item = mRepos[index].name;
+    final RepoModel repo = mRepos[index];
     var repoContent = new ListTile(
       isThreeLine: false,
       leading: new CircleAvatar(
@@ -135,13 +136,13 @@ class GithubRepoState extends State<GithubRepo> {
         ),
       ),
       title: new Text(
-        item,
+        repo.name,
         style: _biggerFont,
       ),
     );
 
     var repoItem = new GestureDetector(
-      onTap: () => print('test $index'),
+      onTap: () => _navigateToRepoDetail(repo, index),
       child: repoContent,
     );
     return repoItem;
@@ -171,6 +172,16 @@ class GithubRepoState extends State<GithubRepo> {
         }
       });
     });
+  }
+
+  _navigateToRepoDetail(RepoModel repo, int index) {
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            settings: const RouteSettings(name: GithubRepoDetail.routeName),
+            builder: (BuildContext context) {
+              return new GithubRepoDetail(repo, index: index);
+            })
+    );
   }
 
 

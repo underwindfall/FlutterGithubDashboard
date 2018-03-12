@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'repo_detail.g.dart';
 
 @JsonSerializable()
-class RepoDetailModel extends Object with _$RepoDetailModeSerializerMixin {
+class RepoDetailModel extends Object with _$RepoDetailModelSerializerMixin {
 
   @JsonKey(name: 'id')
   int id;
@@ -14,9 +14,12 @@ class RepoDetailModel extends Object with _$RepoDetailModeSerializerMixin {
   OwnerModel ownerModel;
   @JsonKey(name: 'language')
   String language;
+  @JsonKey(name: 'description')
+  String description;
 
-  RepoDetailModel(this.id, this.name, this.ownerModel, this.language);
+  RepoDetailModel(this.id, this.name, this.ownerModel, this.language,
+      this.description);
 
   factory RepoDetailModel.fromJson(Map<String, dynamic> json)=>
-      _$RepoDetailModeFromJson(json);
+      _$RepoDetailModelFromJson(json);
 }
