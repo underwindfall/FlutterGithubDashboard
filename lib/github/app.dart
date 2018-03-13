@@ -1,26 +1,16 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:githubdashboard/github/api/githubApi.dart';
+import 'package:githubdashboard/github/login_screen.dart';
+import 'package:githubdashboard/github/route/routes.dart';
 
-import 'homeScreen.dart';
+class GithubDashBoardApp extends StatelessWidget {
 
-class GithubDashBoardApp extends StatefulWidget {
+  final Router router = new Router();
+  final GithubApi _githubApi = new GithubApi();
 
-
-  @override
-  GithubDashBoardAppState createState() => new GithubDashBoardAppState();
-
-}
-
-class GithubDashBoardAppState extends State<GithubDashBoardApp> {
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+  GithubDashBoardApp() {
+    configureRouter(router, _githubApi);
   }
 
 
@@ -32,8 +22,8 @@ class GithubDashBoardAppState extends State<GithubDashBoardApp> {
         primaryColor: Colors.blue,
         primarySwatch: Colors.blue,
       ),
-      home: new GithubDashBoardHome(),
+      home: new LoginScreen(_githubApi),
+      onGenerateRoute: router.generator,
     );
   }
-
 }

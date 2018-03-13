@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
-import 'package:githubdashboard/github/repodetailScreen.dart';
+import 'package:githubdashboard/github/repodetail_screen.dart';
 
 enum IndicatorType { overscroll, refresh }
 

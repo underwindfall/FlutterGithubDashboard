@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'repodetailScreen.dart';
+part of 'repodetail_screen.dart';
 
 // **************************************************************************
 // Generator: JsonSerializableGenerator

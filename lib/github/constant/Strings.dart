@@ -1,4 +1,5 @@
 class Strings {
+
   static const String APP_NAME = "FlutterGitHub";
   static const String WATCHERS = "watchers";
   static const String OPEN_ISSUES = "open issues";
@@ -10,4 +11,11 @@ class Strings {
   static const String COMMITS = "commit(s)";
   static const String WATCHING_REPO = "watching repo";
   static const String CREATED = "created";
+
+  //Login
+  static const String LOGIN_APPBAR_TITLE = "FlutterHub Login";
+  static const String LOGIN_USER_NAME = "Input your UserName or Email";
+  static const String PASSWORD_USER_NAME = "Input your Password";
+  static const String LOGIN_BUTTON = "Login";
+
 }

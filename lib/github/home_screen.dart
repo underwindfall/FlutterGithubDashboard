@@ -1,16 +1,17 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:githubdashboard/github/api/githubApi.dart';
 
-import 'repoScreen.dart';
+import 'repo_screen.dart';
 
 class GithubDashBoardHome extends StatefulWidget {
-  const GithubDashBoardHome({
-    Key key
-  }) :super(key: key);
+  final GithubApi _githubApi;
+
+
+  GithubDashBoardHome(this._githubApi);
 
   @override
-  GithubDashBoardHomeState createState() => new GithubDashBoardHomeState();
+  GithubDashBoardHomeState createState() =>
+      new GithubDashBoardHomeState(_githubApi);
 
 }
 
@@ -22,7 +23,10 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GithubApi _githubApi;
   SearchData searchData = new SearchData();
+
+  GithubDashBoardHomeState(this._githubApi);
 
 
   void showInSnackBar(String value) {
@@ -37,11 +41,6 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome>
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
-      //dart analytics 从什么地方开始追踪代码
-      Timeline.instantSync('Start Transition', arguments: <String, String>{
-        'from': '/',
-        'to': GithubRepo.routeName
-      });
       Navigator.of(context).push(
           new MaterialPageRoute(
               settings: const RouteSettings(name: GithubRepo.routeName),
