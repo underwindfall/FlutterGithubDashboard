@@ -99,12 +99,12 @@ class RepoItem extends StatelessWidget {
               children: <Widget>[
                 //profile Image and title
                 new SizedBox(
-                  height: 184.0,
+                  height: 175.0,
                   child: new Stack(
                     children: <Widget>[
                       new Positioned.fill(
                         child: new Image.network(
-                          'https://dn-sdkcnssl.qbox.me/article/fyuBUISCkmddVNC0t2Iu.png',
+                          'http://hd.wallpaperswide.com/thumbs/code_rain_dark-t2.jpg',
                           fit: BoxFit.cover,
                         ), //image Network
                       ), //Positioned.fill
@@ -137,12 +137,25 @@ class RepoItem extends StatelessWidget {
                           children: <Widget>[
                             //three line description
                             new Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: new Text(
-                                repoDetail == null ? "login" : repoDetail
-                                    .ownerModel.login,
-                                style: descriptionStyle.copyWith(
-                                    color: Colors.black54),
+                              padding: const EdgeInsets.only(bottom: 0.0),
+                              child: new Chip(
+                                avatar: new CircleAvatar(
+                                  child: new Image.network(
+                                    (repoDetail == null ||
+                                        repoDetail.ownerModel.avatarUrl.isEmpty)
+                                        ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
+                                        : repoDetail.ownerModel.avatarUrl,
+
+                                  ),
+                                ),
+                                label: new Text(
+                                  repoDetail == null ? "login" : repoDetail
+                                      .ownerModel.login,
+                                  style: descriptionStyle.copyWith(
+                                      color: Colors.black54),
+                                ),
+
+
                               ), //Text
                             ), //padding
                             new Text(
@@ -158,22 +171,25 @@ class RepoItem extends StatelessWidget {
                     )
                 ), //Expanded
                 //Star
-                new ButtonTheme.bar(
-                  child: new ButtonBar(
-                    alignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new IconButton(
-                        icon: const Icon(Icons.star),
-                        onPressed: () {
-                          print("clicked Star");
-                        },
+                new IconTheme(
+                    data: new IconThemeData(color: Colors.yellowAccent),
+                    child: new ButtonTheme.bar(
+                      child: new ButtonBar(
+                        alignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new IconButton(
+                            icon: const Icon(Icons.star),
+                            onPressed: () {
+                              print("clicked Star");
+                            },
+                          ),
+                          new Text(
+                              repoDetail == null ? "0" : repo.starCount
+                                  .toString()
+                          )
+                        ],
                       ),
-                      new Text(
-                          repoDetail == null ? "0" : repo.starCount.toString()
-                      )
-                    ],
-                  ),
-                ),
+                    )),
               ]), //Colum
         ), //Card
       ), //Container

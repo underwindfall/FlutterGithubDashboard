@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
-import 'repo.dart';
+import 'repoScreen.dart';
 
 class GithubDashBoardHome extends StatefulWidget {
   const GithubDashBoardHome({
@@ -16,7 +18,8 @@ class SearchData {
   String name = '';
 }
 
-class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
+class GithubDashBoardHomeState extends State<GithubDashBoardHome>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   SearchData searchData = new SearchData();
@@ -34,7 +37,18 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
-//      showInSnackBar('Sucess input ${searchData.name} waiting for search ');
+      //dart analytics 从什么地方开始追踪代码
+      Timeline.instantSync('Start Transition', arguments: <String, String>{
+        'from': '/',
+        'to': GithubRepo.routeName
+      });
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              settings: const RouteSettings(name: GithubRepo.routeName),
+              builder: (context) {
+                return new GithubRepo(name: searchData.name);
+              })
+      );
     }
   }
 
@@ -42,15 +56,8 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
     if (value.isEmpty) {
       return 'Name is required';
     } else {
-      Navigator.of(context).push(
-          new MaterialPageRoute(
-              settings: const RouteSettings(name: GithubRepo.routeName),
-              builder: (context) {
-                return new GithubRepo(name: value);
-              })
-      );
+      return null;
     }
-    return null;
   }
 
 
@@ -59,7 +66,7 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-        title: new Text("Github DashBoard "),
+        title: new Text("Github DashBoard"),
       ),
       body: new SafeArea(
         top: false,
@@ -68,7 +75,7 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
           key: _formKey,
           child: new ListView(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 150.0),
+                horizontal: 16.0, vertical: 80.0),
             children: <Widget>[
               //Logo
               new Image.network(
@@ -77,14 +84,13 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
                 width: 150.0,
               ),
               //input search field
-
               new Container(
-                padding: const EdgeInsets.only(top: 100.0),
+                padding: const EdgeInsets.only(top: 80.0),
                 alignment: Alignment.center,
                 child: new TextFormField(
                   decoration: const InputDecoration(
                       icon: const Icon(Icons.person),
-                      hintText: 'What do you want to seach for ?',
+                      hintText: 'What do you want to seach for?',
                       labelText: 'Search *'
                   ),
                   onSaved: (String value) {
@@ -94,8 +100,6 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
                 ),
 
               ),
-
-
               //
               new Container(
                 padding: const EdgeInsets.all(20.0),
@@ -115,5 +119,6 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome> {
       ),
     );
   }
+
 
 }
