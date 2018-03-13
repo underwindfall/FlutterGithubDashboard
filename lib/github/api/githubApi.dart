@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:githubdashboard/github/api/client/OauthClient.dart';
 import 'package:githubdashboard/github/constant/constant.dart';
-import 'package:githubdashboard/github/constant/token.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/repo_detail.dart';
 import 'package:githubdashboard/github/model/user.dart';
@@ -32,6 +31,7 @@ class GithubApi {
 
   OauthClient get oauthClient => _oauthClient;
 
+  String get token => _token;
 
   final String _clientId = CLIENT_ID;
   final String _clientSecret = CLIENT_SECRET;
@@ -41,6 +41,7 @@ class GithubApi {
   bool _initialized;
   bool _loggedIn;
   String _username;
+  String _token;
   OauthClient _oauthClient;
 
   var httpClient = new HttpClient();
@@ -56,6 +57,7 @@ class GithubApi {
     } else {
       _loggedIn = true;
       _username = username;
+      _token = oauthToken;
       _oauthClient = new OauthClient(_client, oauthToken);
     }
     _initialized = true;
@@ -91,13 +93,13 @@ class GithubApi {
   }
 
   Future<UserModel> getUser(String name) async {
-    var url = '$BASE_URL/users/$name?access_token=$TOKEN';
+    var url = '$BASE_URL/users/$name?access_token=$_token';
     Map<String, dynamic> decodedJSON = await _getDecodedJson(url);
     return new UserModel.fromJson(decodedJSON);
   }
 
   Future<List<RepoModel>> getRepos(String name) async {
-    var url = '$BASE_URL/users/$name/repos?access_token=$TOKEN';
+    var url = '$BASE_URL/users/$name/repos?access_token=$_token';
     var decodedJSON = await _getDecodedJson(url);
     List<RepoModel> repoList = new List<RepoModel>();
     for (var repoJSON in decodedJSON) {
@@ -108,7 +110,7 @@ class GithubApi {
 
   Future<RepoDetailModel> getRepoDetail(String repoOwner,
       String repoName) async {
-    var url = '$BASE_URL/repos/$repoOwner/$repoName?access_token=$TOKEN';
+    var url = '$BASE_URL/repos/$repoOwner/$repoName?access_token=$_token';
     var decodedJSON = await _getDecodedJson(url);
     return new RepoDetailModel.fromJson(decodedJSON);
   }
@@ -118,9 +120,13 @@ class GithubApi {
     var uri = Uri.parse(url);
     var request = await httpClient.getUrl(uri);
     var response = await request.close();
-    var json = await response.transform(UTF8.decoder).join();
-    var decoded = JSON.decode(json);
-    return decoded;
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(UTF8.decoder).join();
+      var decoded = JSON.decode(json);
+      return decoded;
+    } else {
+      throw new Exception('Fetch data network exception');
+    }
   }
 
   _getEncodedAuthorization(String username, String password) {
@@ -135,6 +141,7 @@ class GithubApi {
     await preferences.commit();
     _username = username;
     _oauthClient = new OauthClient(_client, oauthToken);
+    _token = oauthToken;
   }
 
   Future logout() async {
