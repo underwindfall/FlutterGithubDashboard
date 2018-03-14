@@ -29,7 +29,7 @@ class RepoListScreenState extends State<RepoListScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
-
+  final TextEditingController _searchController = new TextEditingController();
   final GithubApi api = new GithubApi();
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
@@ -88,7 +88,29 @@ class RepoListScreenState extends State<RepoListScreen> {
           new IconButton(
             icon: const Icon(Icons.search),
             tooltip: Strings.REPO_SEARCH_TOOLIP,
-            onPressed: () => null,
+            onPressed: () =>
+                _showDialog<String>(
+                  context: context,
+                  child: new AlertDialog(
+                    title: const Text(
+                        Strings.REPO_DIALOG_TITLE
+                    ),
+                    content: new TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: Strings.REPO_DIALOG_TITLE,
+                      ),
+                      validator: _validateSearch,
+                      controller: _searchController,
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                          onPressed: () =>
+                              Navigator.pop(context, _searchController.text),
+                          child: const Text(Strings.REPO_SEARCH_TOOLIP
+                          )),
+                    ],
+                  ), //SimpleDialog
+                ),
           ), //IconButton
           new IconButton(
               icon: const Icon(Icons.refresh),
@@ -173,5 +195,25 @@ class RepoListScreenState extends State<RepoListScreen> {
     );
   }
 
+  void _showDialog<T>({BuildContext context, Widget child}) {
+    showDialog<T>(context: context, child: child)
+        .then<Null>((T value) {
+      if (value != null) {
+        _handleSearch(value);
+      }
+    });
+  }
 
+
+  _handleSearch(value) {
+    Navigator.pushReplacementNamed(context, "user/repos");
+  }
+
+  String _validateSearch(String value) {
+    if (value.isEmpty) {
+      return 'Name is required';
+    } else {
+      return null;
+    }
+  }
 }
