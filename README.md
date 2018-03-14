@@ -9,4 +9,7 @@ For help getting started with Flutter, view our online
 
 ## Support 
 
-By using [*json_serializable*](https://flutter.io/json/) you should run `flutter packages pub run build_runner watch`
+By using 
+- [*json_serializable*](https://flutter.io/json/) you should run `flutter packages pub run build_runner watch`
+
+- [*Http Network*](https://flutter.io/networking/) 

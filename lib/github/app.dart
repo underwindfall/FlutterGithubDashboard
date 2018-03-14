@@ -1,35 +1,16 @@
-import 'dart:async';
-
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:githubdashboard/github/api/githubApi.dart';
+import 'package:githubdashboard/github/route/routes.dart';
+import 'package:githubdashboard/github/splash_screen.dart';
 
-import 'home.dart';
+class GithubDashBoardApp extends StatelessWidget {
 
-class GithubDashBoardApp extends StatefulWidget {
+  final Router router = new Router();
+  final GithubApi _githubApi = new GithubApi();
 
-
-  @override
-  GithubDashBoardAppState createState() => new GithubDashBoardAppState();
-
-}
-
-class GithubDashBoardAppState extends State<GithubDashBoardApp> {
-
-  double _timeDilation = 1.0;
-
-  Timer _timeDilationTimer;
-
-  @override
-  void initState() {
-    _timeDilation = timeDilation;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _timeDilationTimer?.cancel();
-    _timeDilationTimer = null;
-    super.dispose();
+  GithubDashBoardApp() {
+    configureRouter(router, _githubApi);
   }
 
 
@@ -41,8 +22,8 @@ class GithubDashBoardAppState extends State<GithubDashBoardApp> {
         primaryColor: Colors.blue,
         primarySwatch: Colors.blue,
       ),
-      home: new GithubDashBoardHome(),
+      home: new SplashScreen(_githubApi),
+      onGenerateRoute: router.generator,
     );
   }
-
 }

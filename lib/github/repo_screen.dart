@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
-import 'package:githubdashboard/github/repo_detail.dart';
+import 'package:githubdashboard/github/repodetail_screen.dart';
 
 enum IndicatorType { overscroll, refresh }
 
 
-class GithubRepo extends StatefulWidget {
-  const GithubRepo({Key key, @required this.name})
+class RepoListScreen extends StatefulWidget {
+  const RepoListScreen({Key key, @required this.name})
       :assert(name != null),
         super(key: key);
 
@@ -20,10 +20,10 @@ class GithubRepo extends StatefulWidget {
   static const String routeName = '/github/repo';
 
   @override
-  GithubRepoState createState() => new GithubRepoState();
+  RepoListScreenState createState() => new RepoListScreenState();
 }
 
-class GithubRepoState extends State<GithubRepo> {
+class RepoListScreenState extends State<RepoListScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
