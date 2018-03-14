@@ -18,4 +18,11 @@ class Strings {
   static const String PASSWORD_USER_NAME = "Input your Password";
   static const String LOGIN_BUTTON = "Login";
 
+  //Repo
+  static const String REPO_APPBAR_TITLE = "FlutterHub Repo";
+
+  //Error
+  static const String ERROR_APPBAR_TITLE = "FlutterHub Error";
+  static const String ERROR_GENERAL = "Sorry, We have a problem about network connection";
+  static const String ERROR_RETRY = "Retry";
 }

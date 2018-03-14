@@ -43,9 +43,9 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome>
       form.save();
       Navigator.of(context).push(
           new MaterialPageRoute(
-              settings: const RouteSettings(name: GithubRepo.routeName),
+              settings: const RouteSettings(name: RepoListScreen.routeName),
               builder: (context) {
-                return new GithubRepo(name: searchData.name);
+                return new RepoListScreen(name: searchData.name);
               })
       );
     }

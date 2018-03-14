@@ -21,6 +21,7 @@ class GithubApi {
 
 
   static const String KEY_USERNAME = 'KEY_USERNAME';
+//  static const String KEY_PASSWORD = 'KEY_PASSWORD';
   static const String KEY_OAUTH_TOKEN = 'KEY_AUTH_TOKEN';
 
   bool get initialized => _initialized;
@@ -83,7 +84,8 @@ class GithubApi {
 
     if (loginResponse.statusCode == 201) {
       final bodyJson = JSON.decode(loginResponse.body);
-      await _saveTokens(username, bodyJson['token']);
+      final name = await _getUserName(bodyJson['token']);
+      await _saveTokens(name, bodyJson['token']);
       _loggedIn = true;
     } else {
       _loggedIn = false;
@@ -147,6 +149,12 @@ class GithubApi {
   Future logout() async {
     await _saveTokens(null, null);
     _loggedIn = false;
+  }
+
+  Future _getUserName(bodyJson) async{
+    var url ='$BASE_URL/user?access_token=$bodyJson';
+    Map<String, dynamic> decodedJSON = await _getDecodedJson(url);
+    return decodedJSON['login'];
   }
 
 }

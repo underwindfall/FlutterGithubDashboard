@@ -96,9 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
     _githubApi.login(_usernameController.text, _passwordController.text)
         .then((success) {
       if (success) {
-        Navigator.pushReplacementNamed(context, "/home");
+        Navigator.pushReplacementNamed(context, "/user/repos");
       } else {
-        //todo show an error screen
+        Navigator.pushReplacementNamed(context, "/error");
       }
     });
   }

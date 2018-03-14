@@ -1,8 +1,8 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
-import 'package:githubdashboard/github/login_screen.dart';
 import 'package:githubdashboard/github/route/routes.dart';
+import 'package:githubdashboard/github/splash_screen.dart';
 
 class GithubDashBoardApp extends StatelessWidget {
 
@@ -22,7 +22,7 @@ class GithubDashBoardApp extends StatelessWidget {
         primaryColor: Colors.blue,
         primarySwatch: Colors.blue,
       ),
-      home: new LoginScreen(_githubApi),
+      home: new SplashScreen(_githubApi),
       onGenerateRoute: router.generator,
     );
   }
