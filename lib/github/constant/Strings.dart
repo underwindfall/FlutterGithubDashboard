@@ -15,11 +15,13 @@ class Strings {
   //Login
   static const String LOGIN_APPBAR_TITLE = "FlutterHub Login";
   static const String LOGIN_USER_NAME = "Input your UserName or Email";
-  static const String PASSWORD_USER_NAME = "Input your Password";
+  static const String PASSWORD_VALUE = "Input your Password";
   static const String LOGIN_BUTTON = "Login";
 
   //Repo
   static const String REPO_APPBAR_TITLE = "FlutterHub Repo";
+  static const String REPO_REFRESH_TOOLIP = "Refresh";
+  static const String REPO_SEARCH_TOOLIP = "Search";
 
   //Error
   static const String ERROR_APPBAR_TITLE = "FlutterHub Error";
