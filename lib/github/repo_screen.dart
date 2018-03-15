@@ -206,7 +206,8 @@ class RepoListScreenState extends State<RepoListScreen> {
 
 
   _handleSearch(value) {
-    Navigator.pushReplacementNamed(context, "user/repos");
+    fetchData(value);
+    // userName =value;
   }
 
   String _validateSearch(String value) {

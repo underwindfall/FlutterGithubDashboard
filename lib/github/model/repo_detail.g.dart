@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'repodetail_screen.dart';
+part of 'repo_detail.dart';
 
 // **************************************************************************
 // Generator: JsonSerializableGenerator
@@ -18,13 +18,9 @@ RepoDetailModel _$RepoDetailModelFromJson(Map<String, dynamic> json) =>
 
 abstract class _$RepoDetailModelSerializerMixin {
   int get id;
-
   String get name;
-
   OwnerModel get ownerModel;
-
   String get language;
-
   String get description;
 
   Map<String, dynamic> toJson() =>
