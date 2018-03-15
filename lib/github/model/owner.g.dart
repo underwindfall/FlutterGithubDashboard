@@ -13,11 +13,8 @@ OwnerModel _$OwnerModelFromJson(Map<String, dynamic> json) =>
 
 abstract class _$OwnerModelSerializerMixin {
   String get login;
-
   int get id;
-
   String get avatarUrl;
-
   Map<String, dynamic> toJson() =>
       <String, dynamic>{'login': login, 'id': id, 'avatar_url': avatarUrl};
 }

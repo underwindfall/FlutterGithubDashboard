@@ -21,7 +21,7 @@ class GithubApi {
 
 
   static const String KEY_USERNAME = 'KEY_USERNAME';
-//  static const String KEY_PASSWORD = 'KEY_PASSWORD';
+  static const String KEY_PASSWORD = 'KEY_PASSWORD';
   static const String KEY_OAUTH_TOKEN = 'KEY_AUTH_TOKEN';
 
   bool get initialized => _initialized;
@@ -34,6 +34,8 @@ class GithubApi {
 
   String get token => _token;
 
+  String get password => _password;
+
   final String _clientId = CLIENT_ID;
   final String _clientSecret = CLIENT_SECRET;
   final Client _client = new Client();
@@ -42,6 +44,7 @@ class GithubApi {
   bool _initialized;
   bool _loggedIn;
   String _username;
+  String _password;
   String _token;
   OauthClient _oauthClient;
 
@@ -51,6 +54,7 @@ class GithubApi {
   Future init() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String username = preferences.getString(KEY_USERNAME);
+    String password = preferences.getString(KEY_PASSWORD);
     String oauthToken = preferences.getString(KEY_OAUTH_TOKEN);
     if (username == null || oauthToken == null) {
       _loggedIn = false;
@@ -58,6 +62,7 @@ class GithubApi {
     } else {
       _loggedIn = true;
       _username = username;
+      _password = password;
       _token = oauthToken;
       _oauthClient = new OauthClient(_client, oauthToken);
     }
@@ -85,7 +90,7 @@ class GithubApi {
     if (loginResponse.statusCode == 201) {
       final bodyJson = JSON.decode(loginResponse.body);
       final name = await _getUserName(bodyJson['token']);
-      await _saveTokens(name, bodyJson['token']);
+      await _saveTokens(name, password, bodyJson['token']);
       _loggedIn = true;
     } else {
       _loggedIn = false;
@@ -136,10 +141,12 @@ class GithubApi {
     return BASE64.encode(authorizationBytes);
   }
 
-  Future _saveTokens(String username, String oauthToken) async {
+  Future _saveTokens(String username, String password,
+      String oauthToken) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString(KEY_USERNAME, username);
     preferences.setString(KEY_OAUTH_TOKEN, oauthToken);
+    preferences.setString(KEY_PASSWORD, password);
     await preferences.commit();
     _username = username;
     _oauthClient = new OauthClient(_client, oauthToken);
@@ -147,7 +154,7 @@ class GithubApi {
   }
 
   Future logout() async {
-    await _saveTokens(null, null);
+    await _saveTokens(null, null, null);
     _loggedIn = false;
   }
 

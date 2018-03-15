@@ -15,11 +15,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) =>
 
 abstract class _$UserModelSerializerMixin {
   String get name;
-
   String get avatarUrl;
-
   int get id;
-
   String get reposUrl;
 
   Map<String, dynamic> toJson() =>

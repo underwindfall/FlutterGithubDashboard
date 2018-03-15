@@ -1,32 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:githubdashboard/github/api/githubApi.dart';
 
-import 'repo_screen.dart';
+class SearchScreen extends StatelessWidget {
+//  final GithubApi _githubApi;
 
-class GithubDashBoardHome extends StatefulWidget {
-  final GithubApi _githubApi;
+//  SearchScreen( this._githubApi);
 
+  final VoidCallback onPressed;
 
-  GithubDashBoardHome(this._githubApi);
+  SearchScreen(this.onPressed);
+
+  final TextEditingController _searchController = new TextEditingController();
+
+  String _searchContent;
+
+  String get searchContent => _searchController.text;
+
+  TextEditingController get searchController => _searchController;
+
 
   @override
-  GithubDashBoardHomeState createState() =>
-      new GithubDashBoardHomeState(_githubApi);
+  Widget build(BuildContext context) {
+    return new SimpleDialogOption(
+      onPressed: null,
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          new Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: new TextFormField(
+              decoration: const InputDecoration(
+                  hintText: 'What do you want to seach for?',
+                  labelText: 'Search *'
+              ),
+              validator: _validateSearch,
+              controller: _searchController,
+            ), //TextFormField
+          ), //Padding
+          new IconButton(
+            icon: const Icon(Icons.book),
+            iconSize: 36.0,
+            color: Colors.blue,
+            onPressed: onPressed,
+          ), //Icon
+        ], //widget
+      ), //Row
+    ); //SimpleDialogOption
+  }
+
+  String _validateSearch(String value) {
+    if (value.isEmpty) {
+      return 'Name is required';
+    } else {
+      return null;
+    }
+  }
+/*@override
+  SearchScreenState createState() => new SearchScreenState(_githubApi);*/
+
 
 }
 
-class SearchData {
+/*class SearchData {
   String name = '';
-}
+}*/
 
-class GithubDashBoardHomeState extends State<GithubDashBoardHome>
+/*class SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final GithubApi _githubApi;
   SearchData searchData = new SearchData();
 
-  GithubDashBoardHomeState(this._githubApi);
+  SearchScreenState(this._githubApi);
 
 
   void showInSnackBar(String value) {
@@ -120,4 +166,4 @@ class GithubDashBoardHomeState extends State<GithubDashBoardHome>
   }
 
 
-}
+}*/

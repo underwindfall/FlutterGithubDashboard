@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
+import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
 import 'package:githubdashboard/github/repodetail_screen.dart';
@@ -28,7 +29,7 @@ class RepoListScreenState extends State<RepoListScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
-
+  final TextEditingController _searchController = new TextEditingController();
   final GithubApi api = new GithubApi();
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
@@ -45,12 +46,12 @@ class RepoListScreenState extends State<RepoListScreen> {
   }
 
 
-  Future<Null> _handleRefresh() {
-    final Completer<Null> completer = new Completer<Null>();
-    new Timer(const Duration(seconds: 3), () {
-      completer.complete(null);
-    });
-    return completer.future.then((_) {
+  Future<Null> _handleRefresh() async {
+    final userModel = await api.getUser(userName);
+    final repos = await api.getRepos(userName);
+    setState(() {
+      mUserModel = userModel;
+      mRepos = repos;
       _scaffoldKey.currentState?.showSnackBar(new SnackBar(
           content: const Text('Refresh complete'),
           action: new SnackBarAction(
@@ -71,7 +72,7 @@ class RepoListScreenState extends State<RepoListScreen> {
       appBar: new AppBar(
         title: new Text(
             mUserModel == null ? 'Github Repo' : '${mUserModel
-                .name} \'s Github Repo'),
+                .name} \'s Repo'),
         actions: <Widget>[
           new IconButton(
               icon: new CircleAvatar(
@@ -83,14 +84,41 @@ class RepoListScreenState extends State<RepoListScreen> {
                   height: 20.0,
                 ),
               ),
-              onPressed: null),
+              onPressed: null), //IconButton
+          new IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: Strings.REPO_SEARCH_TOOLIP,
+            onPressed: () =>
+                _showDialog<String>(
+                  context: context,
+                  child: new AlertDialog(
+                    title: const Text(
+                        Strings.REPO_DIALOG_TITLE
+                    ),
+                    content: new TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: Strings.REPO_DIALOG_TITLE,
+                      ),
+                      validator: _validateSearch,
+                      controller: _searchController,
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                          onPressed: () =>
+                              Navigator.pop(context, _searchController.text),
+                          child: const Text(Strings.REPO_SEARCH_TOOLIP
+                          )),
+                    ],
+                  ), //SimpleDialog
+                ),
+          ), //IconButton
           new IconButton(
               icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
+              tooltip: Strings.REPO_REFRESH_TOOLIP,
               onPressed: () {
                 _refreshIndicatorKey.currentState.show();
-                fetchData(mUserModel.name);
-              }),
+                fetchData(userName);
+              }), //IconButton
 
         ],
       ), //appbar
@@ -98,26 +126,9 @@ class RepoListScreenState extends State<RepoListScreen> {
         key: _refreshIndicatorKey,
         onRefresh: _handleRefresh,
         child: new ListView.builder(
-            padding: kMaterialListPadding,
-            itemCount: mRepos.length,
+          padding: kMaterialListPadding,
+          itemCount: mRepos.length,
           itemBuilder: _buildReopItem,
-          /*itemBuilder: (BuildContext context, int index) {
-              final String item = mRepos[index].name;
-              return new ListTile(
-                isThreeLine: false,
-                leading: new CircleAvatar(
-                  child: new Image.network(
-                    'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png',
-                    width: 20.0,
-                    height: 20.0,
-                  ),
-                ),
-                title: new Text(
-                  item,
-                  style: _biggerFont,
-                ),
-              );
-            }*/
         ),
 
       ),
@@ -184,5 +195,26 @@ class RepoListScreenState extends State<RepoListScreen> {
     );
   }
 
+  void _showDialog<T>({BuildContext context, Widget child}) {
+    showDialog<T>(context: context, child: child)
+        .then<Null>((T value) {
+      if (value != null) {
+        _handleSearch(value);
+      }
+    });
+  }
 
+
+  _handleSearch(value) {
+    fetchData(value);
+    // userName =value;
+  }
+
+  String _validateSearch(String value) {
+    if (value.isEmpty) {
+      return 'Name is required';
+    } else {
+      return null;
+    }
+  }
 }
