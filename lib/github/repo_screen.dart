@@ -6,7 +6,6 @@ import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
-import 'package:githubdashboard/github/repodetail_screen.dart';
 
 enum IndicatorType { overscroll, refresh }
 
@@ -186,13 +185,15 @@ class RepoListScreenState extends State<RepoListScreen> {
   }
 
   _navigateToRepoDetail(RepoModel repo, int index) {
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            settings: const RouteSettings(name: GithubRepoDetail.routeName),
-            builder: (BuildContext context) {
-              return new GithubRepoDetail(repo, index: index);
-            })
-    );
+    Navigator.pushNamed(
+        context, '/repos/${repo.ownerModel.login}/${repo.name}');
+//    Navigator.of(context).push(
+//        new MaterialPageRoute(
+//            settings: const RouteSettings(name: RepoScreen.routeName),
+//            builder: (BuildContext context) {
+//              return new RepoScreen();
+//            })
+//    );
   }
 
   void _showDialog<T>({BuildContext context, Widget child}) {
