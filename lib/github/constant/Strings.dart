@@ -18,12 +18,17 @@ class Strings {
   static const String PASSWORD_VALUE = "Input your Password";
   static const String LOGIN_BUTTON = "Login";
 
-  //Repo
+  //RepoList
   static const String REPO_APPBAR_TITLE = "FlutterHub Repo";
   static const String REPO_REFRESH_TOOLIP = "Refresh";
   static const String REPO_SEARCH_TOOLIP = "Search";
   static const String REPO_DIALOG_TITLE = "Search whatever you want ";
   static const String REPO_SNACK_BAR = "You search: ";
+
+  //RepoDetail
+  static const String REPODETAIL_APPBAR_TITLE = "Repo Detail";
+  static const String REPO_TABS_1 = "Info";
+  static const String REPO_TABS_2 = "File";
 
   //Search
   static const String SEARCH_CONTENT = "You can use this dialog to search anyone repository";
@@ -32,4 +37,12 @@ class Strings {
   static const String ERROR_APPBAR_TITLE = "FlutterHub Error";
   static const String ERROR_GENERAL = "Sorry, We have a problem about network connection";
   static const String ERROR_RETRY = "Retry";
+
+  //Issues
+  static const String ISSUES_TITLE = "Issues";
+
+  //Pull Request
+  static const String PULLREQUEST_TILE = "Pull Request";
+
+
 }
