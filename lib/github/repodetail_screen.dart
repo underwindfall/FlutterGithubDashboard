@@ -251,7 +251,6 @@ class RepoScreenState extends State<RepoScreen>
   }
 
   Widget _buildReadme(String data) {
-    print(data);
     return new Markdown(data: data,);
   }
 

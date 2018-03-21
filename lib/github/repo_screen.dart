@@ -30,9 +30,11 @@ class RepoListScreenState extends State<RepoListScreen>
       RefreshIndicatorState>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
   final TextEditingController _searchController = new TextEditingController();
-  final GithubApi api = new GithubApi();
+  final GithubApi _githubApi = new GithubApi();
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
+
+  Future<UserModel> _future;
 
   String get userName => widget.name;
 
@@ -40,7 +42,7 @@ class RepoListScreenState extends State<RepoListScreen>
   Animation<double> _drawerContentsOpacity;
   Animation<Offset> _drawerDetailsPosition;
 
-  //todo
+
   bool _showDrawerContents = true;
 
   @override
@@ -64,6 +66,7 @@ class RepoListScreenState extends State<RepoListScreen>
       parent: _controller,
       curve: Curves.fastOutSlowIn,
     ));
+    _future = _githubApi.getUser(userName);
   }
 
 
@@ -74,8 +77,8 @@ class RepoListScreenState extends State<RepoListScreen>
   }
 
   Future<Null> _handleRefresh() async {
-    final userModel = await api.getUser(userName);
-    final repos = await api.getRepos(userName);
+    final userModel = await _githubApi.getUser(userName);
+    final repos = await _githubApi.getRepos(userName);
     setState(() {
       mUserModel = userModel;
       mRepos = repos;
@@ -167,19 +170,29 @@ class RepoListScreenState extends State<RepoListScreen>
     Drawer drawer = new Drawer(
       child: new Column(
         children: <Widget>[
-          new UserAccountsDrawerHeader(
-            accountName: new Text(
-                mUserModel == null ? "Null" : mUserModel.login),
-            accountEmail: new Text(
-                mUserModel == null ? "Null" : mUserModel.email),
-            currentAccountPicture: new CircleAvatar(
-              child: new Image.network(
-                (mUserModel == null || mUserModel.avatarUrl.isEmpty)
-                    ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
-                    : mUserModel.avatarUrl,
-              ),
-            ),
-            margin: EdgeInsets.zero,
+          new FutureBuilder<UserModel>(
+            future: _future,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasError) {
+                return new Center(
+                  child: new Text(snapshot.error),
+                );
+              }
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return new Center(
+                    child: new CircularProgressIndicator(),
+                  );
+                default:
+                  return new UserAccountsDrawerHeader(
+                    accountName: new Text(
+                        snapshot.data.login),
+                    accountEmail: new Text(snapshot.data.email),
+                    currentAccountPicture: new CircleAvatar(
+                      child: new Image.network(snapshot.data.avatarUrl,),
+                    ),
+                    margin: EdgeInsets.zero,
 //            onDetailsPressed: () {
 //              _showDrawerContents = !_showDrawerContents;
 //              if (_showDrawerContents)
@@ -187,6 +200,9 @@ class RepoListScreenState extends State<RepoListScreen>
 //              else
 //                _controller.forward();
 //            },
+                  );
+              }
+            },
           ),
 
           new MediaQuery.removePadding(
@@ -226,7 +242,7 @@ class RepoListScreenState extends State<RepoListScreen>
                                   leading: const Icon(Icons.exit_to_app),
                                   title: const Text('Log out accounts'),
                                   onTap: () {
-                                    api.logout()
+                                    _githubApi.logout()
                                         .then((_) =>
                                         Navigator.pushReplacementNamed(
                                             context, '/login'));
@@ -305,7 +321,7 @@ class RepoListScreenState extends State<RepoListScreen>
   }
 
   fetchData(String name) {
-    api.getUser(name).then((model) {
+    _githubApi.getUser(name).then((model) {
       setState(() {
         if (model != null) {
           mUserModel = model;
@@ -316,7 +332,7 @@ class RepoListScreenState extends State<RepoListScreen>
         }
       });
     });
-    api.getRepos(name).then((repoList) {
+    _githubApi.getRepos(name).then((repoList) {
       setState(() {
         if (repoList != null) {
           mRepos = repoList;
