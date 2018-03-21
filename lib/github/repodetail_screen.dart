@@ -31,7 +31,7 @@ class RepoScreenState extends State<RepoScreen>
   final String _repo;
   Future<RepoDetailModel> _future;
   TabController _tabController;
-  static const double _appBarHeight = 160.0;
+  static const double _appBarHeight = 165.0;
 
   final List<Tab> myTabs = <Tab>[
     new Tab(text: Strings.REPO_TABS_1, icon: new Icon(Icons.question_answer)),
@@ -148,10 +148,11 @@ class RepoScreenState extends State<RepoScreen>
     if (repoDetailModel.description != null) {
       items.add(
           new Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 10.0),
+            padding: const EdgeInsets.fromLTRB(25.0, 29.0, 20.0, 10.0),
             child: new Text(
               repoDetailModel.description,
-              maxLines: 3,
+              maxLines: 1,
+              style: new TextStyle(color: Colors.white),
               overflow: TextOverflow.ellipsis,
             ),
           )
@@ -194,9 +195,11 @@ class RepoScreenState extends State<RepoScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _buildStatButton(repoDetailModel.openIssues,
-                const Text(Strings.ISSUES_TITLE), () {}),
+                const Text(Strings.ISSUES_TITLE,
+                  style: const TextStyle(color: Colors.white),), () {}),
             _buildStatButton(repoDetailModel.openIssues,
-                const Text(Strings.PULLREQUEST_TILE), () {}),
+                const Text(Strings.PULLREQUEST_TILE,
+                    style: const TextStyle(color: Colors.white)), () {}),
           ],
         )
     );
@@ -216,7 +219,8 @@ class RepoScreenState extends State<RepoScreen>
         onPressed: onPressed,
         child: new Column(
           children: <Widget>[
-            new Text(count.toString()),
+            new Text(
+                count.toString(), style: const TextStyle(color: Colors.white)),
             new Padding(
                 padding: const EdgeInsets.only(top: 2.0),
                 child: bottom

@@ -12,7 +12,7 @@ final ThemeData themeData = new ThemeData(
     accentColor: _MyColors.accent[500],
     primaryTextTheme: new Typography(platform: defaultTargetPlatform).white,
     primaryIconTheme: const IconThemeData(color: Colors.white),
-    accentIconTheme: const IconThemeData(color: Colors.white)
+  accentIconTheme: const IconThemeData(color: Colors.white),
 );
 
 class _MyColors {

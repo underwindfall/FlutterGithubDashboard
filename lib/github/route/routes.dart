@@ -29,11 +29,11 @@ HandlerFunc buildRepoHandler(GithubApi api) {
   new RepoScreen(
       api,
 //       new RepoManager(api),
-      api.username,
-      "Android_MVP_Sport"
+      params['owner'][0],
+      params['repo'][0]
+//      "Android_MVP_Sport"
   );
 }
-
 
 
 void configureRouter(Router router, GithubApi api) {

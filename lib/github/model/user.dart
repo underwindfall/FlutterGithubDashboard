@@ -6,14 +6,20 @@ part 'user.g.dart';
 class UserModel extends Object with _$UserModelSerializerMixin {
   @JsonKey(name: 'name')
   String name;
+  @JsonKey(name: 'login')
+  String login;
   @JsonKey(name: 'avatar_url')
   String avatarUrl;
   @JsonKey(name: 'id')
   int id;
   @JsonKey(name: 'repos_url')
   String reposUrl;
+  @JsonKey(name: 'email')
+  String email;
 
-  UserModel(this.id, this.name, this.avatarUrl, this.reposUrl);
+
+  UserModel(this.name, this.login, this.avatarUrl, this.id, this.reposUrl,
+      this.email);
 
   bool isValid() {
     return name != null;
