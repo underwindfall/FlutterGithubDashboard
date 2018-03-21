@@ -291,33 +291,23 @@ class RepoListScreenState extends State<RepoListScreen>
   _buildDrawerOptions() {
     var options = <Widget>[];
     var option1 = new ListTile(
-      leading: const Icon(Icons.info),
-      title: const Text('Legal Mentions'),
-      onTap: _showNotImplementedMessage,
+        leading: const Icon(Icons.info),
+        title: const Text(Strings.OPTIONS_COPY_RIGHT),
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(context, '/copyright');
+        }
     );
 
     var option2 = new ListTile(
       leading: const Icon(Icons.settings),
-      title: const Text('Settings'),
+      title: const Text(Strings.OPTIONS_SETTINGS),
       onTap: _showNotImplementedMessage,
     );
 
     options.add(option1);
     options.add(option2);
     return options;
-  }
-
-  Widget _drawerOption(Icon icon, String name) {
-    return new Container(
-      padding: const EdgeInsets.only(top: 19.0),
-      child: new Row(
-        children: <Widget>[
-          new Container(
-              padding: const EdgeInsets.only(right: 28.0), child: icon),
-          new Text(name, textScaleFactor: 1.1)
-        ],
-      ),
-    );
   }
 
   fetchData(String name) {
