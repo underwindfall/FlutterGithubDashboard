@@ -30,26 +30,16 @@ RepoDetailModel _$RepoDetailModelFromJson(Map<String, dynamic> json) =>
 abstract class _$RepoDetailModelSerializerMixin {
   int get id;
   OwnerModel get ownerModel;
-
   String get name;
-
   String get fullName;
   String get description;
-
   String get language;
-
   bool get fork;
-
   String get url;
-
   int get stargazersCount;
-
   int get forksCount;
-
   int get subscribersCount;
-
   int get openIssues;
-
   RepoDetailModel get parent;
 
   Map<String, dynamic> toJson() =>
