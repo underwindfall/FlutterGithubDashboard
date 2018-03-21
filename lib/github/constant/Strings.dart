@@ -36,7 +36,11 @@ class Strings {
   //Error
   static const String ERROR_APPBAR_TITLE = "FlutterHub Error";
   static const String ERROR_GENERAL = "Sorry, We have a problem about network connection";
+  static const String ERROR_GENERAL_README = """# Flutter Error
+  Sorry, We have a problem about network connection
+  """;
   static const String ERROR_RETRY = "Retry";
+  static const String EMPTY_STRING = "Welcome to No man's sky";
 
   //Issues
   static const String ISSUES_TITLE = "Issues";

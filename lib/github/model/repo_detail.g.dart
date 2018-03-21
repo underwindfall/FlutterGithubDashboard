@@ -25,7 +25,8 @@ RepoDetailModel _$RepoDetailModelFromJson(Map<String, dynamic> json) =>
         json['parent'] == null
             ? null
             : new RepoDetailModel.fromJson(
-            json['parent'] as Map<String, dynamic>));
+            json['parent'] as Map<String, dynamic>),
+        json['default_branch'] as String);
 
 abstract class _$RepoDetailModelSerializerMixin {
   int get id;
@@ -42,6 +43,8 @@ abstract class _$RepoDetailModelSerializerMixin {
   int get openIssues;
   RepoDetailModel get parent;
 
+  String get defaultBranch;
+
   Map<String, dynamic> toJson() =>
       <String, dynamic>{
         'id': id,
@@ -56,6 +59,7 @@ abstract class _$RepoDetailModelSerializerMixin {
         'forks_count': forksCount,
         'subscribers_count': subscribersCount,
         'open_issues': openIssues,
-        'parent': parent
+        'parent': parent,
+        'default_branch': defaultBranch
       };
 }

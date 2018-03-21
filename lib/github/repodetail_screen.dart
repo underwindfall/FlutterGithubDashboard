@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/constant/Strings.dart';
-import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/repo_detail.dart';
 
 class RepoScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class RepoScreenState extends State<RepoScreen>
   final String _username;
   final String _repo;
   Future<RepoDetailModel> _future;
+  Future<String> _readmeFuture;
   TabController _tabController;
   static const double _appBarHeight = 165.0;
 
@@ -44,6 +45,7 @@ class RepoScreenState extends State<RepoScreen>
   void initState() {
     super.initState();
     _future = _githubApi.getRepoDetail(_username, _repo);
+    _readmeFuture = _githubApi.getReadme(_username, _repo);
     _tabController = new TabController(length: myTabs.length, vsync: this);
   }
 
@@ -90,9 +92,27 @@ class RepoScreenState extends State<RepoScreen>
         padding: const EdgeInsets.all(12.0),
         child: new Card(
           child: new Center(
-            child: new Text(
-              "Working on it",
-              textAlign: TextAlign.center,
+            child: new FutureBuilder<String>(
+              future: _readmeFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  return new Text(
+                    Strings.ERROR_GENERAL,
+                    textAlign: TextAlign.center,
+                  );
+                }
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return new Text(Strings.EMPTY_STRING,
+                        textAlign: TextAlign.center);
+                  case ConnectionState.waiting:
+                    return new Center(
+                      child: new CircularProgressIndicator(),
+                    );
+                  default:
+                    return _buildReadme(snapshot.data);
+                }
+              },
             ),
           ),
         ),
@@ -230,130 +250,9 @@ class RepoScreenState extends State<RepoScreen>
     );
   }
 
-
-}
-
-
-class RepoItem extends StatelessWidget {
-  RepoItem({Key key, @required this.repoDetail, @required this.repo})
-      :assert(repoDetail != null),
-        super(key: key);
-  final RepoDetailModel repoDetail;
-  final RepoModel repo;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle titleStyle = theme.textTheme.headline.copyWith(
-        color: Colors.white);
-    final TextStyle descriptionStyle = theme.textTheme.subhead;
-    return new SafeArea(
-      top: false,
-      bottom: false,
-      child: new Container(
-        padding: const EdgeInsets.all(8.0),
-        height: 366.0,
-        child: new Card(
-          child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                //profile Image and title
-                new SizedBox(
-                  height: 175.0,
-                  child: new Stack(
-                    children: <Widget>[
-                      new Positioned.fill(
-                        child: new Image.network(
-                          'http://hd.wallpaperswide.com/thumbs/code_rain_dark-t2.jpg',
-                          fit: BoxFit.cover,
-                        ), //image Network
-                      ), //Positioned.fill
-                      new Positioned(
-                          bottom: 16.0,
-                          left: 16.0,
-                          right: 16.0,
-                          child: new FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: new Text(
-                              repoDetail == null ? "name" : repoDetail.name,
-                              style: titleStyle,
-                            ), //text
-                          ) //FittedBox
-                      ), //Positioned
-                    ], //widget
-                  ), //stack
-                ), //sizedBox
-                //descrption and star language profile
-                new Expanded(
-                    child: new Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-                      child: new DefaultTextStyle(
-                        softWrap: false,
-                        style: descriptionStyle,
-                        overflow: TextOverflow.ellipsis,
-                        child: new Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            //three line description
-                            new Padding(
-                              padding: const EdgeInsets.only(bottom: 0.0),
-                              child: new Chip(
-                                avatar: new CircleAvatar(
-                                  child: new Image.network(
-                                    (repoDetail == null ||
-                                        repoDetail.ownerModel.avatarUrl.isEmpty)
-                                        ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
-                                        : repoDetail.ownerModel.avatarUrl,
-
-                                  ),
-                                ),
-                                label: new Text(
-                                  repoDetail == null ? "login" : repoDetail
-                                      .ownerModel.login,
-                                  style: descriptionStyle.copyWith(
-                                      color: Colors.black54),
-                                ),
-
-
-                              ), //Text
-                            ), //padding
-                            new Text(
-                                repoDetail == null ? "language" : repoDetail
-                                    .language),
-                            new Text(
-                                repoDetail == null ? "Description" : repoDetail
-                                    .description)
-
-                          ],
-                        ), //Column
-                      ),
-                    )
-                ), //Expanded
-                //Star
-                new IconTheme(
-                    data: new IconThemeData(color: Colors.yellowAccent),
-                    child: new ButtonTheme.bar(
-                      child: new ButtonBar(
-                        alignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          new IconButton(
-                            icon: const Icon(Icons.star),
-                            onPressed: () {
-                              print("clicked Star");
-                            },
-                          ),
-                          new Text(
-                              repoDetail == null ? "0" : repo.starCount
-                                  .toString()
-                          )
-                        ],
-                      ),
-                    )),
-              ]), //Colum
-        ), //Card
-      ), //Container
-    ); //SafeArea
+  Widget _buildReadme(String data) {
+    print(data);
+    return new Markdown(data: data,);
   }
 
 
