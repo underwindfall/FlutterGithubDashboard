@@ -193,13 +193,13 @@ class RepoListScreenState extends State<RepoListScreen>
                       child: new Image.network(snapshot.data.avatarUrl,),
                     ),
                     margin: EdgeInsets.zero,
-//            onDetailsPressed: () {
-//              _showDrawerContents = !_showDrawerContents;
-//              if (_showDrawerContents)
-//                _controller.reverse();
-//              else
-//                _controller.forward();
-//            },
+                    onDetailsPressed: () {
+                      _showDrawerContents = !_showDrawerContents;
+                      if (_showDrawerContents)
+                        _controller.reverse();
+                      else
+                        _controller.forward();
+                    },
                   );
               }
             },
