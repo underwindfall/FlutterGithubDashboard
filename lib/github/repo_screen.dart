@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
-import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
 
@@ -35,10 +34,7 @@ class RepoListScreenState extends State<RepoListScreen>
   List<RepoModel> mRepos = [];
 
 
-
   String get userName => widget.name;
-
-
 
 
   @override
@@ -71,73 +67,15 @@ class RepoListScreenState extends State<RepoListScreen>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      key: _scaffoldKey,
-      appBar: new AppBar(
-        title: new Text(
-            mUserModel == null ? 'Github Repo' : '${mUserModel
-                .name} \'s Repo'),
-        actions: <Widget>[
-//          new IconButton(
-//              icon: new CircleAvatar(
-//                child: new Image.network(
-//                  (mUserModel == null || mUserModel.avatarUrl.isEmpty)
-//                      ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
-//                      : mUserModel.avatarUrl,
-//                  width: 20.0,
-//                  height: 20.0,
-//                ),
-//              ),
-//              onPressed: null), //IconButton
-          new IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: Strings.REPO_SEARCH_TOOLIP,
-            onPressed: () =>
-                _showDialog<String>(
-                  context: context,
-                  child: new AlertDialog(
-                    title: const Text(
-                        Strings.REPO_DIALOG_TITLE
-                    ),
-                    content: new TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: Strings.REPO_DIALOG_TITLE,
-                      ),
-                      validator: _validateSearch,
-                      controller: _searchController,
-                    ),
-                    actions: <Widget>[
-                      new FlatButton(
-                          onPressed: () =>
-                              Navigator.pop(context, _searchController.text),
-                          child: const Text(Strings.REPO_SEARCH_TOOLIP
-                          )),
-                    ],
-                  ), //SimpleDialog
-                ),
-          ), //IconButton
-          new IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: Strings.REPO_REFRESH_TOOLIP,
-              onPressed: () {
-                _refreshIndicatorKey.currentState.show();
-                fetchData(userName);
-              }), //IconButton
-
-        ],
-      ), //appbar
-
-
-      body: new RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _handleRefresh,
-        child: new ListView.builder(
-          padding: kMaterialListPadding,
-          itemCount: mRepos.length,
-          itemBuilder: _buildReopItem,
-        ),
-
+    return new RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: _handleRefresh,
+      child: new ListView.builder(
+        padding: kMaterialListPadding,
+        itemCount: mRepos.length,
+        itemBuilder: _buildReopItem,
       ),
+
     );
   }
 
@@ -165,7 +103,6 @@ class RepoListScreenState extends State<RepoListScreen>
     );
     return repoItem;
   }
-
 
 
   fetchData(String name) {
@@ -196,28 +133,6 @@ class RepoListScreenState extends State<RepoListScreen>
   _navigateToRepoDetail(RepoModel repo, int index) {
     Navigator.pushNamed(
         context, '/repos/${repo.ownerModel.login}/${repo.name}');
-  }
-
-  void _showDialog<T>({BuildContext context, Widget child}) {
-    showDialog<T>(context: context, child: child)
-        .then<Null>((T value) {
-      if (value != null) {
-        _handleSearch(value);
-      }
-    });
-  }
-
-
-  _handleSearch(value) {
-    fetchData(value);
-  }
-
-  String _validateSearch(String value) {
-    if (value.isEmpty) {
-      return 'Name is required';
-    } else {
-      return null;
-    }
   }
 
 
