@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:githubdashboard/github/api/client/OauthClient.dart';
+import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/constant/constant.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/repo_detail.dart';
@@ -158,10 +159,24 @@ class GithubApi {
     _loggedIn = false;
   }
 
-  Future _getUserName(bodyJson) async{
-    var url ='$BASE_URL/user?access_token=$bodyJson';
+  Future _getUserName(bodyJson) async {
+    var url = '$BASE_URL/user?access_token=$bodyJson';
     Map<String, dynamic> decodedJSON = await _getDecodedJson(url);
     return decodedJSON['login'];
+  }
+
+  Future getReadme(String name, String repoName,
+      [String defalutBranch = "master"]) async {
+    var url = '$README_URL_PREFIX/$name/$repoName/$defalutBranch/README.md';
+    var uri = Uri.parse(url);
+    var request = await httpClient.getUrl(uri);
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(UTF8.decoder).join();
+      return json;
+    } else {
+      return Strings.ERROR_GENERAL_README;
+    }
   }
 
 }
