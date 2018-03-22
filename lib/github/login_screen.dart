@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     _githubApi.login(_usernameController.text, _passwordController.text)
         .then((success) {
       if (success) {
-        Navigator.pushReplacementNamed(context, "/user/repos");
+        Navigator.pushReplacementNamed(context, "/home");
       } else {
         Navigator.pushReplacementNamed(context, "/error");
       }

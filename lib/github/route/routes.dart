@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/copyright_screen.dart';
 import 'package:githubdashboard/github/error_screen.dart';
+import 'package:githubdashboard/github/home_screen.dart';
 import 'package:githubdashboard/github/login_screen.dart';
 import 'package:githubdashboard/github/repo_screen.dart';
 import 'package:githubdashboard/github/repodetail_screen.dart';
@@ -12,6 +13,11 @@ typedef Widget HandlerFunc(BuildContext context, Map<String, dynamic> params);
 HandlerFunc buildLoginHandler(GithubApi api) {
   return (BuildContext context, Map<String, dynamic> params) =>
   new LoginScreen(api);
+}
+
+HandlerFunc buildLHomeHandler(GithubApi api) {
+  return (BuildContext context, Map<String, dynamic> params) =>
+  new HomeScreen(api);
 }
 
 HandlerFunc buildRepoListHandler(GithubApi api) {
@@ -34,10 +40,8 @@ HandlerFunc buildRepoHandler(GithubApi api) {
       Map<String, dynamic> params) =>
   new RepoScreen(
       api,
-//       new RepoManager(api),
       params['owner'][0],
       params['repo'][0]
-//      "Android_MVP_Sport"
   );
 }
 
@@ -46,6 +50,11 @@ void configureRouter(Router router, GithubApi api) {
   router.define(
       '/login',
       handler: new Handler(handlerFunc: buildLoginHandler(api))
+  );
+
+  router.define(
+      '/home',
+      handler: new Handler(handlerFunc: buildLHomeHandler(api))
   );
 
   router.define(

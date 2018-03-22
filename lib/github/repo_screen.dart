@@ -34,16 +34,12 @@ class RepoListScreenState extends State<RepoListScreen>
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
 
-  Future<UserModel> _future;
+
 
   String get userName => widget.name;
 
-  AnimationController _controller;
-  Animation<double> _drawerContentsOpacity;
-  Animation<Offset> _drawerDetailsPosition;
 
 
-  bool _showDrawerContents = true;
 
   @override
   void initState() {
@@ -51,30 +47,8 @@ class RepoListScreenState extends State<RepoListScreen>
     fetchData(userName);
     _scaffoldKey =
     new GlobalKey<ScaffoldState>(debugLabel: 'Search Name $userName');
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _drawerContentsOpacity = new CurvedAnimation(
-      parent: new ReverseAnimation(_controller),
-      curve: Curves.fastOutSlowIn,
-    );
-    _drawerDetailsPosition = new Tween<Offset>(
-      begin: const Offset(0.0, -1.0),
-      end: Offset.zero,
-    ).animate(new CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-    ));
-    _future = _githubApi.getUser(userName);
   }
 
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   Future<Null> _handleRefresh() async {
     final userModel = await _githubApi.getUser(userName);
@@ -152,7 +126,8 @@ class RepoListScreenState extends State<RepoListScreen>
 
         ],
       ), //appbar
-      drawer: _buildDrawer(),
+
+
       body: new RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: _handleRefresh,
@@ -166,103 +141,6 @@ class RepoListScreenState extends State<RepoListScreen>
     );
   }
 
-  Widget _buildDrawer() {
-    Drawer drawer = new Drawer(
-      child: new Column(
-        children: <Widget>[
-          new FutureBuilder<UserModel>(
-            future: _future,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasError) {
-                return new Center(
-                  child: new Text(snapshot.error),
-                );
-              }
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return new Center(
-                    child: new CircularProgressIndicator(),
-                  );
-                default:
-                  return new UserAccountsDrawerHeader(
-                    accountName: new Text(
-                        snapshot.data.login),
-                    accountEmail: new Text(snapshot.data.email),
-                    currentAccountPicture: new CircleAvatar(
-                      child: new Image.network(snapshot.data.avatarUrl,),
-                    ),
-                    margin: EdgeInsets.zero,
-                    onDetailsPressed: () {
-                      _showDrawerContents = !_showDrawerContents;
-                      if (_showDrawerContents)
-                        _controller.reverse();
-                      else
-                        _controller.forward();
-                    },
-                  );
-              }
-            },
-          ),
-
-          new MediaQuery.removePadding(
-            context: context,
-            // DrawerHeader consumes top MediaQuery padding.
-            removeTop: true,
-            child: new Expanded(
-              child: new ListView(
-                padding: const EdgeInsets.only(top: 8.0),
-                children: <Widget>[
-                  new Stack(
-                    children: <Widget>[
-                      // The initial contents of the drawer.
-                      new FadeTransition(
-                        opacity: _drawerContentsOpacity,
-                        child: new Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: _buildDrawerOptions()
-                        ),
-                      ),
-                      // The drawer's "details" view.
-                      new SlideTransition(
-                        position: _drawerDetailsPosition,
-                        child: new FadeTransition(
-                          opacity: new ReverseAnimation(_drawerContentsOpacity),
-                          child: new Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              new ListTile(
-                                leading: const Icon(Icons.add),
-                                title: const Text('Add account'),
-                                onTap: _showNotImplementedMessage,
-                              ),
-                              new ListTile(
-                                  leading: const Icon(Icons.exit_to_app),
-                                  title: const Text('Log out accounts'),
-                                  onTap: () {
-                                    _githubApi.logout()
-                                        .then((_) =>
-                                        Navigator.pushReplacementNamed(
-                                            context, '/login'));
-                                  }
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-    return drawer;
-  }
 
   _buildReopItem(BuildContext context, int index) {
     final RepoModel repo = mRepos[index];
@@ -288,27 +166,7 @@ class RepoListScreenState extends State<RepoListScreen>
     return repoItem;
   }
 
-  _buildDrawerOptions() {
-    var options = <Widget>[];
-    var option1 = new ListTile(
-        leading: const Icon(Icons.info),
-        title: const Text(Strings.OPTIONS_COPY_RIGHT),
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(context, '/copyright');
-        }
-    );
 
-    var option2 = new ListTile(
-      leading: const Icon(Icons.settings),
-      title: const Text(Strings.OPTIONS_SETTINGS),
-      onTap: _showNotImplementedMessage,
-    );
-
-    options.add(option1);
-    options.add(option2);
-    return options;
-  }
 
   fetchData(String name) {
     _githubApi.getUser(name).then((model) {
@@ -362,11 +220,5 @@ class RepoListScreenState extends State<RepoListScreen>
     }
   }
 
-  void _showNotImplementedMessage() {
-    Navigator.of(context).pop(); // Dismiss the drawer.
-    _scaffoldKey.currentState.showSnackBar(const SnackBar(
-        content: const Text("The drawer's items don't do anything")
-    ));
-  }
 
 }
