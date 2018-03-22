@@ -30,18 +30,16 @@ class RepoListScreenState extends State<RepoListScreen>
       RefreshIndicatorState>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
   final TextEditingController _searchController = new TextEditingController();
-  final GithubApi api = new GithubApi();
+  final GithubApi _githubApi = new GithubApi();
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
 
+
+
   String get userName => widget.name;
 
-  AnimationController _controller;
-  Animation<double> _drawerContentsOpacity;
-  Animation<Offset> _drawerDetailsPosition;
 
-  //todo
-  bool _showDrawerContents = true;
+
 
   @override
   void initState() {
@@ -49,33 +47,12 @@ class RepoListScreenState extends State<RepoListScreen>
     fetchData(userName);
     _scaffoldKey =
     new GlobalKey<ScaffoldState>(debugLabel: 'Search Name $userName');
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _drawerContentsOpacity = new CurvedAnimation(
-      parent: new ReverseAnimation(_controller),
-      curve: Curves.fastOutSlowIn,
-    );
-    _drawerDetailsPosition = new Tween<Offset>(
-      begin: const Offset(0.0, -1.0),
-      end: Offset.zero,
-    ).animate(new CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-    ));
   }
 
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   Future<Null> _handleRefresh() async {
-    final userModel = await api.getUser(userName);
-    final repos = await api.getRepos(userName);
+    final userModel = await _githubApi.getUser(userName);
+    final repos = await _githubApi.getRepos(userName);
     setState(() {
       mUserModel = userModel;
       mRepos = repos;
@@ -149,7 +126,8 @@ class RepoListScreenState extends State<RepoListScreen>
 
         ],
       ), //appbar
-      drawer: _buildDrawer(),
+
+
       body: new RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: _handleRefresh,
@@ -163,90 +141,6 @@ class RepoListScreenState extends State<RepoListScreen>
     );
   }
 
-  Widget _buildDrawer() {
-    Drawer drawer = new Drawer(
-      child: new Column(
-        children: <Widget>[
-          new UserAccountsDrawerHeader(
-            accountName: new Text(
-                mUserModel == null ? "Null" : mUserModel.login),
-            accountEmail: new Text(
-                mUserModel == null ? "Null" : mUserModel.email),
-            currentAccountPicture: new CircleAvatar(
-              child: new Image.network(
-                (mUserModel == null || mUserModel.avatarUrl.isEmpty)
-                    ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
-                    : mUserModel.avatarUrl,
-              ),
-            ),
-            margin: EdgeInsets.zero,
-//            onDetailsPressed: () {
-//              _showDrawerContents = !_showDrawerContents;
-//              if (_showDrawerContents)
-//                _controller.reverse();
-//              else
-//                _controller.forward();
-//            },
-          ),
-
-          new MediaQuery.removePadding(
-            context: context,
-            // DrawerHeader consumes top MediaQuery padding.
-            removeTop: true,
-            child: new Expanded(
-              child: new ListView(
-                padding: const EdgeInsets.only(top: 8.0),
-                children: <Widget>[
-                  new Stack(
-                    children: <Widget>[
-                      // The initial contents of the drawer.
-                      new FadeTransition(
-                        opacity: _drawerContentsOpacity,
-                        child: new Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: _buildDrawerOptions()
-                        ),
-                      ),
-                      // The drawer's "details" view.
-                      new SlideTransition(
-                        position: _drawerDetailsPosition,
-                        child: new FadeTransition(
-                          opacity: new ReverseAnimation(_drawerContentsOpacity),
-                          child: new Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              new ListTile(
-                                leading: const Icon(Icons.add),
-                                title: const Text('Add account'),
-                                onTap: _showNotImplementedMessage,
-                              ),
-                              new ListTile(
-                                  leading: const Icon(Icons.exit_to_app),
-                                  title: const Text('Log out accounts'),
-                                  onTap: () {
-                                    api.logout()
-                                        .then((_) =>
-                                        Navigator.pushReplacementNamed(
-                                            context, '/login'));
-                                  }
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-    return drawer;
-  }
 
   _buildReopItem(BuildContext context, int index) {
     final RepoModel repo = mRepos[index];
@@ -272,40 +166,10 @@ class RepoListScreenState extends State<RepoListScreen>
     return repoItem;
   }
 
-  _buildDrawerOptions() {
-    var options = <Widget>[];
-    var option1 = new ListTile(
-      leading: const Icon(Icons.info),
-      title: const Text('Legal Mentions'),
-      onTap: _showNotImplementedMessage,
-    );
 
-    var option2 = new ListTile(
-      leading: const Icon(Icons.settings),
-      title: const Text('Settings'),
-      onTap: _showNotImplementedMessage,
-    );
-
-    options.add(option1);
-    options.add(option2);
-    return options;
-  }
-
-  Widget _drawerOption(Icon icon, String name) {
-    return new Container(
-      padding: const EdgeInsets.only(top: 19.0),
-      child: new Row(
-        children: <Widget>[
-          new Container(
-              padding: const EdgeInsets.only(right: 28.0), child: icon),
-          new Text(name, textScaleFactor: 1.1)
-        ],
-      ),
-    );
-  }
 
   fetchData(String name) {
-    api.getUser(name).then((model) {
+    _githubApi.getUser(name).then((model) {
       setState(() {
         if (model != null) {
           mUserModel = model;
@@ -316,7 +180,7 @@ class RepoListScreenState extends State<RepoListScreen>
         }
       });
     });
-    api.getRepos(name).then((repoList) {
+    _githubApi.getRepos(name).then((repoList) {
       setState(() {
         if (repoList != null) {
           mRepos = repoList;
@@ -356,11 +220,5 @@ class RepoListScreenState extends State<RepoListScreen>
     }
   }
 
-  void _showNotImplementedMessage() {
-    Navigator.of(context).pop(); // Dismiss the drawer.
-    _scaffoldKey.currentState.showSnackBar(const SnackBar(
-        content: const Text("The drawer's items don't do anything")
-    ));
-  }
 
 }

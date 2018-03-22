@@ -33,12 +33,14 @@ class RepoDetailModel extends Object with _$RepoDetailModelSerializerMixin {
   int openIssues;
   @JsonKey(name: 'parent')
   RepoDetailModel parent;
+  @JsonKey(name: 'default_branch')
+  String defaultBranch;
 
 
   RepoDetailModel(this.id, this.ownerModel, this.name, this.fullName,
       this.description, this.language, this.fork, this.url,
       this.stargazersCount, this.forksCount, this.subscribersCount,
-      this.openIssues, this.parent);
+      this.openIssues, this.parent, this.defaultBranch);
 
   factory RepoDetailModel.fromJson(Map<String, dynamic> json)=>
       _$RepoDetailModelFromJson(json);
