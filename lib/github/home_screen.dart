@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/constant/Strings.dart';
+import 'package:githubdashboard/github/feed_screen.dart';
 import 'package:githubdashboard/github/model/user.dart';
 import 'package:githubdashboard/github/repo_screen.dart';
 import 'package:githubdashboard/github/widget/navigation.dart';
@@ -22,8 +23,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _currentIndex = 0;
   List<HomeScreenItem> _homeScreenItems;
   final GithubApi _githubApi;
-  Future<UserModel> _future;
+  final TextEditingController _searchController = new TextEditingController();
 
+  Future<UserModel> _future;
   bool _showDrawerContents = true;
   AnimationController _controller;
   Animation<double> _drawerContentsOpacity;
@@ -55,11 +57,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ));
     _homeScreenItems = [
       new HomeScreenItem(
-          icon: const Icon(Icons.rss_feed),
-          title: const Text(Strings.NAV_ITEM_FEED),
-          content: new RepoListScreen(
-            name: _githubApi.username,
-          )
+        icon: const Icon(Icons.rss_feed),
+        title: const Text(Strings.NAV_ITEM_FEED),
+        content: new FeedListScreen(
+          githubApi: _githubApi,
+          name: _githubApi.username,
+        ),
       ),
       new HomeScreenItem(
         icon: const Icon(Icons.person),
@@ -80,9 +83,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(Strings.APP_NAME),
+        centerTitle: true,
+        actions: <Widget>[
+          new IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: Strings.REPO_SEARCH_TOOLIP,
+            onPressed: () =>
+                _showDialog<String>(
+                  context: context,
+                  child: new AlertDialog(
+                    title: const Text(
+                        Strings.REPO_DIALOG_TITLE
+                    ),
+                    content: new TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: Strings.REPO_DIALOG_TITLE,
+                      ),
+                      validator: _validateSearch,
+                      controller: _searchController,
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                          onPressed: () =>
+                              Navigator.pop(context, _searchController.text),
+                          child: const Text(Strings.REPO_SEARCH_TOOLIP
+                          )),
+                    ],
+                  ), //SimpleDialog
+                ),
+          ), //IconButton
+        ],
+      ),
       drawer: _buildDrawer(),
       body: _homeScreenItems[_currentIndex].content,
       bottomNavigationBar: new BottomNavigationBar(
+        currentIndex: _currentIndex,
         items: _homeScreenItems.map((HomeScreenItem item) => item.item)
             .toList(),
         onTap: _navBarItemSelected,
@@ -223,6 +260,54 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _currentIndex = selected;
     });
   }
+
+  _handleSearch(value) {
+    fetchData(value);
+  }
+
+  String _validateSearch(String value) {
+    if (value.isEmpty) {
+      return 'Name is required';
+    } else {
+      return null;
+    }
+  }
+
+  void _showDialog<T>({BuildContext context, Widget child}) {
+    showDialog<T>(context: context, child: child)
+        .then<Null>((T value) {
+      if (value != null) {
+        _handleSearch(value);
+      }
+    });
+  }
+
+  fetchData(String name) {
+//    _githubApi.getUser(name).then((model) {
+//      setState(() {
+//        if (model != null) {
+//          mUserModel = model;
+//        } else {
+//          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+//              content: new Text('fetch user error')
+//          ));
+//        }
+//      });
+//    });
+//    _githubApi.getRepos(name).then((repoList) {
+//      setState(() {
+//        if (repoList != null) {
+//          mRepos = repoList;
+//        } else {
+//          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+//              content: new Text('fetch repos error')
+//          ));
+//        }
+//      });
+//    });
+  }
+
+
 }
 
 
