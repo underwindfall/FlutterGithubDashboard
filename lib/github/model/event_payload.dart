@@ -26,7 +26,24 @@ class EventPayloadModel extends Object with _$EventPayloadModelSerializerMixin {
   EventPayloadModel(this.action, this.ref, this.refType, this.pusherType,
       this.description, this.number, this.size, this.pullRequest);
 
-  factory EventPayloadModel.fromJson(Map<String, dynamic> json)=>
+  factory EventPayloadModel.fromJson(Map<String, dynamic> json){
+    if (json == null) {
+      return null;
+    } else {
+      return new EventPayloadModel(
+          eventActionTypeFromString(json['action']),
+          json['ref'] as String,
+          eventPayloadTypeFromString(json['ref_type']),
+          eventPayloadTypeFromString(json['pusher_type']),
+          json['description'] as String,
+          json['number'] as int,
+          json['size'] as int,
+          json['pull_request'] == null
+              ? null
+              : new PullRequestModel.fromJson(
+              json['pull_request'] as Map<String, dynamic>));
+    }
+  }
 //      _$EventPayloadModelFromJson(json);
 
 }

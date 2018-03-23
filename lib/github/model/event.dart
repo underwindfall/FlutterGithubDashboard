@@ -21,9 +21,7 @@ class EventModel extends Object with _$EventModelSerializerMixin {
   @JsonKey(name: 'payload')
   EventPayloadModel payload;
 
-  EventModel(this.id, this.type,
-//      this.actor, this.org, this.repo, this.payload
-      );
+  EventModel(this.id, this.type, this.actor, this.org, this.repo, this.payload);
 
   factory EventModel.fromJson(Map<String, dynamic> json){
     //      _$EventModelFromJson(json);
@@ -31,13 +29,24 @@ class EventModel extends Object with _$EventModelSerializerMixin {
       return null;
     } else {
       return new EventModel(
-          json['id'],
+          json['id'] as String,
           eventTypeFromString(json['type']),
-          new EventActorModel.fromJson(json['actor']),
-          new EventActorModel.fromJson(json['org']),
-          new EventRepoModel.fromJson(json['repo']),
-          new EventPayloadModel.fromJson(json['payload'])
-      );
+          json['actor'] == null
+              ? null
+              : new EventActorModel.fromJson(
+              json['actor'] as Map<String, dynamic>),
+          json['org'] == null
+              ? null
+              : new EventActorModel.fromJson(
+              json['org'] as Map<String, dynamic>),
+          json['repo'] == null
+              ? null
+              : new EventRepoModel.fromJson(
+              json['repo'] as Map<String, dynamic>),
+          json['payload'] == null
+              ? null
+              : new EventPayloadModel.fromJson(
+              json['payload'] as Map<String, dynamic>));
     }
   }
 }

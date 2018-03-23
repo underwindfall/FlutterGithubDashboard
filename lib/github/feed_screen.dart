@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/model/event.dart';
+import 'package:githubdashboard/github/tiles/event_tile.dart';
 
 
 enum IndicatorType { overscroll, refresh }
@@ -78,10 +79,7 @@ class _FeedListScreenState extends State<FeedListScreen> {
   }
 
   Widget _buildFeedsItem(List<EventModel> models, int index) {
-//    return new EventTile(models[index]);
-    return new ListTile(
-      title: new Text(models[index].id),
-    );
+    return new EventTile(models[index]);
   }
 
   Future<Null> _handleRefresh() async {
