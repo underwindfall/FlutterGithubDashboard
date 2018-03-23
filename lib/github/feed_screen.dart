@@ -27,19 +27,21 @@ class FeedListScreen extends StatefulWidget {
 class _FeedListScreenState extends State<FeedListScreen> {
   final GithubApi _githubApi;
   final String _username;
+  int pageIndex = 1;
   Future<List<EventModel>> _future;
-
-  _FeedListScreenState(this._githubApi, this._username);
-
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
+
+  _FeedListScreenState(this._githubApi, this._username);
+
 
   @override
   void initState() {
     super.initState();
     _scaffoldKey = new GlobalKey<ScaffoldState>(debugLabel: 'Feeds');
     _future = _githubApi.getFeeds(_username);
+    pageIndex = 1;
   }
 
   @override
@@ -62,13 +64,15 @@ class _FeedListScreenState extends State<FeedListScreen> {
                   child: new CircularProgressIndicator(),
                 );
               default:
-//                return new Text('hello world');
                 return new ListView.builder(
                     padding: kMaterialListPadding,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       if (index.isOdd) return new Divider();
-                      //todo final index = i ~/ 2; 需要实现loadMore
+                      final currentIndex = index ~/ 2;
+                      if (currentIndex >= snapshot.data.length) {
+                        pageIndex ++;
+                      }
                       return _buildFeedsItem(snapshot.data, index);
                     }
                 );

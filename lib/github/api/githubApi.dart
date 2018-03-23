@@ -124,8 +124,9 @@ class GithubApi {
     return new RepoDetailModel.fromJson(decodedJSON);
   }
 
-  Future<List<EventModel>> getFeeds(String username) async {
-    var url = '$BASE_URL/users/$username/received_events';
+  Future<List<EventModel>> getFeeds(String username,
+      [int pageIndex = 1]) async {
+    var url = '$BASE_URL/users/$username/received_events?page=$pageIndex';
     var decodedJSON = await _getDecodedJson(url);
     List<EventModel> eventList = new List<EventModel>();
     for (var repoJSON in decodedJSON) {
