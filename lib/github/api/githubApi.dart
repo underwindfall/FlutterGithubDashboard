@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:githubdashboard/github/api/client/OauthClient.dart';
 import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/constant/constant.dart';
+import 'package:githubdashboard/github/model/event.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/repo_detail.dart';
 import 'package:githubdashboard/github/model/user.dart';
@@ -121,6 +122,16 @@ class GithubApi {
     var url = '$BASE_URL/repos/$repoOwner/$repoName?access_token=$_token';
     var decodedJSON = await _getDecodedJson(url);
     return new RepoDetailModel.fromJson(decodedJSON);
+  }
+
+  Future<List<EventModel>> getFeeds(String username) async {
+    var url = '$BASE_URL/users/$username/received_events';
+    var decodedJSON = await _getDecodedJson(url);
+    List<EventModel> eventList = new List<EventModel>();
+    for (var repoJSON in decodedJSON) {
+      eventList.add(new EventModel.fromJson(repoJSON));
+    }
+    return eventList;
   }
 
 

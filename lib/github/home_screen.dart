@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/constant/Strings.dart';
+import 'package:githubdashboard/github/feed_screen.dart';
 import 'package:githubdashboard/github/model/user.dart';
 import 'package:githubdashboard/github/repo_screen.dart';
 import 'package:githubdashboard/github/widget/navigation.dart';
@@ -58,14 +59,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       new HomeScreenItem(
         icon: const Icon(Icons.rss_feed),
         title: const Text(Strings.NAV_ITEM_FEED),
-        content: new RepoListScreen(
+        content: new FeedListScreen(
+          githubApi: _githubApi,
           name: _githubApi.username,
         ),
       ),
       new HomeScreenItem(
         icon: const Icon(Icons.person),
         title: const Text(Strings.NAV_ITEM_REPO),
-        content: new Text("test"),
+        content: new RepoListScreen(
+          name: _githubApi.username,
+        ),
       )
     ];
   }
