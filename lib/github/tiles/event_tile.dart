@@ -48,12 +48,12 @@ class EventTile extends StatelessWidget {
         title = 'Unknown event with id ${_eventModel.id}';
     }
     var avatar = new CircleAvatar(
-        child: new Image.network(_eventModel.actor.avatarUrl)
+        backgroundImage: new NetworkImage(_eventModel.actor.avatarUrl)
     );
     return new ListTile(
         leading: avatar,
         trailing: new Icon(icon),
-        dense: true,
+        dense: false,
         isThreeLine: true,
         title: new Text(_eventModel.actor.login),
         subtitle: new Text(title, overflow: TextOverflow.ellipsis, maxLines: 2)
