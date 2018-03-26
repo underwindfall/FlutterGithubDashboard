@@ -28,7 +28,11 @@ class _FeedListScreenState extends State<FeedListScreen> {
   final GithubApi _githubApi;
   final String _username;
   int pageIndex = 1;
-  Future<List<EventModel>> _future;
+
+//  Stream<List<EventModel>> _stream;
+  Future<List<EventModel>> _stream;
+
+//  StreamController<List<EventModel>> scrollStreamController;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
@@ -40,8 +44,11 @@ class _FeedListScreenState extends State<FeedListScreen> {
   void initState() {
     super.initState();
     _scaffoldKey = new GlobalKey<ScaffoldState>(debugLabel: 'Feeds');
-    _future = _githubApi.getFeeds(_username);
     pageIndex = 1;
+    _stream = _githubApi.getFeeds(_username, pageIndex);
+//    _stream = new Stream.fromFuture(_githubApi.getFeeds(_username));
+//    scrollStreamController = new StreamController<List<EventModel>>.broadcast();
+
   }
 
   @override
@@ -50,7 +57,7 @@ class _FeedListScreenState extends State<FeedListScreen> {
       key: _refreshIndicatorKey,
       onRefresh: _handleRefresh,
       child: new FutureBuilder<List<EventModel>>(
-          future: _future,
+          future: _stream,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasError) {
               return new Center(
@@ -63,15 +70,16 @@ class _FeedListScreenState extends State<FeedListScreen> {
                 return new Center(
                   child: new CircularProgressIndicator(),
                 );
-              default:
+              case ConnectionState.active:
+              case ConnectionState.done:
                 return new ListView.builder(
                     padding: kMaterialListPadding,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       if (index.isOdd) return new Divider();
-                      final currentIndex = index ~/ 2;
-                      if (currentIndex >= snapshot.data.length) {
-                        pageIndex ++;
+//                      final i = index ~/ 2;
+                      if (index == snapshot.data.length) {
+                        pageIndex++;
                       }
                       return _buildFeedsItem(snapshot.data, index);
                     }
@@ -87,7 +95,7 @@ class _FeedListScreenState extends State<FeedListScreen> {
   }
 
   Future<Null> _handleRefresh() async {
-//    _future =  _githubApi.getFeeds(_username);
+    _stream = _githubApi.getFeeds(_username, pageIndex);
     setState(() {
       _scaffoldKey.currentState?.showSnackBar(new SnackBar(
           content: const Text('Refresh complete'),
@@ -100,4 +108,5 @@ class _FeedListScreenState extends State<FeedListScreen> {
       ));
     });
   }
+
 }
