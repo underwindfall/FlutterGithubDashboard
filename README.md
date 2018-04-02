@@ -1,6 +1,6 @@
-# githubdashboard
+# githubdashboard 
 
-This is a GitHub client written in flutter. The goal of project is to test Flutter frameworks. 
+This is a GitHub client written in flutter. The goal of project is to test Flutter frameworks.  [中文](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/README_ZH.md)
 
 ## Getting Started
 
