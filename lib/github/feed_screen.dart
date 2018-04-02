@@ -78,8 +78,10 @@ class _FeedListScreenState extends State<FeedListScreen> {
                     itemBuilder: (context, index) {
                       if (index.isOdd) return new Divider();
 //                      final i = index ~/ 2;
-                      if (index == snapshot.data.length) {
+                      if (index == 20) {
                         pageIndex++;
+                        print("================"+pageIndex.toString()+"===============");
+                        debugPrint(_stream.toString());
                       }
                       return _buildFeedsItem(snapshot.data, index);
                     }
