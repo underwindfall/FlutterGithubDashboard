@@ -10,7 +10,7 @@ For help getting started with Flutter, view our online
 ## ScreenShots
 
 ### Login
-![Login](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/login.jpg){:height="100px" width="100px"}
+![Login](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/login.jpg =100x100)
 
 ### Repository List && Detail && Event
 ![Repos](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg){:height="50%" width="50%"} 
