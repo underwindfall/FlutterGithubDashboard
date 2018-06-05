@@ -1,24 +1,24 @@
 # githubdashboard 
 
-This is a GitHub client written in flutter. The goal of project is to test Flutter frameworks.  [中文](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/README_ZH.md)
+这是一个用flutter写的简易的Github客户端，它涵盖了包括登录，获取用户Event和相应的Github Repository及详情信息的功能，作为一个测试使用Flutter Framework的存在.  [English Version](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/README.md)
 
-## Getting Started
+## 开始使用
 
-For help getting started with Flutter, view our online
+关于Flutter的更多信息可以关注如下链接。
 [documentation](https://flutter.io/).
 
-## ScreenShots
+## 截图
 
-### Login
+### 登录
 ![Login](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/login.jpg)
 
 ### Repository List && Detail && Event
 ![Repos](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg) ![Repo Detail](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg)![Event](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg)
 
-### Error
+### 错误
 ![Error](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/error.jpg)
 
-## Support 
+## 相关使用的库 
 
 By using 
 - [*json_serializable*](https://flutter.io/json/) you should run `flutter packages pub run build_runner watch`

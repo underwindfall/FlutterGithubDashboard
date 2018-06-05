@@ -35,12 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future _init() async {
     await _githubApi.init();
-    String routeName;
-    if (_githubApi.loggedIn) {
-      routeName = '/user/repos';
-    } else {
-      routeName = '/login';
-    }
+    String routeName = '/login';
     Navigator.pushReplacementNamed(context, routeName);
   }
 

@@ -15,10 +15,14 @@ class LoginScreen extends StatefulWidget {
 
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   final GithubApi _githubApi;
   final TextEditingController _usernameController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
+
+  String _accoutName = "";
+  String _accountPassword = "";
+  AppLifecycleState _lastLifecycleState;
 
   _LoginScreenState(this._githubApi);
 
@@ -29,6 +33,25 @@ class _LoginScreenState extends State<LoginScreen> {
     Timeline.instantSync('Start Transition', arguments: <String, String>{
       'from': '/',
       'to': 'Home'
+    });
+    WidgetsBinding.instance.addObserver(this);
+    if (_githubApi.loggedIn) {
+      _accoutName = _githubApi.username;
+      _accountPassword = _githubApi.password;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    setState(() {
+      _lastLifecycleState = state;
     });
   }
 
@@ -64,14 +87,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       autofocus: true,
                       controller: _usernameController,
+                      initialValue: _accoutName,
                     ), //TextFormField
                     new TextFormField(
                       decoration: new InputDecoration(
                           icon: const Icon(Icons.https),
-                          hintText: Strings.PASSWORD_USER_NAME
+                          hintText: Strings.PASSWORD_VALUE
                       ),
                       controller: _passwordController,
                       obscureText: true,
+                      initialValue: _accountPassword,
+
                     ), //TextFormField
                     new Container(
                       margin: const EdgeInsets.only(top: 8.0),
@@ -96,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _githubApi.login(_usernameController.text, _passwordController.text)
         .then((success) {
       if (success) {
-        Navigator.pushReplacementNamed(context, "/user/repos");
+        Navigator.pushReplacementNamed(context, "/home");
       } else {
         Navigator.pushReplacementNamed(context, "/error");
       }

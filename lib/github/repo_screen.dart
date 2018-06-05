@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:githubdashboard/github/api/githubApi.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/user.dart';
-import 'package:githubdashboard/github/repodetail_screen.dart';
 
 enum IndicatorType { overscroll, refresh }
 
@@ -23,15 +22,17 @@ class RepoListScreen extends StatefulWidget {
   RepoListScreenState createState() => new RepoListScreenState();
 }
 
-class RepoListScreenState extends State<RepoListScreen> {
+class RepoListScreenState extends State<RepoListScreen>
+    with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
       RefreshIndicatorState>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
-
-  final GithubApi api = new GithubApi();
+  final TextEditingController _searchController = new TextEditingController();
+  final GithubApi _githubApi = new GithubApi();
   UserModel mUserModel;
   List<RepoModel> mRepos = [];
+
 
   String get userName => widget.name;
 
@@ -45,12 +46,12 @@ class RepoListScreenState extends State<RepoListScreen> {
   }
 
 
-  Future<Null> _handleRefresh() {
-    final Completer<Null> completer = new Completer<Null>();
-    new Timer(const Duration(seconds: 3), () {
-      completer.complete(null);
-    });
-    return completer.future.then((_) {
+  Future<Null> _handleRefresh() async {
+    final userModel = await _githubApi.getUser(userName);
+    final repos = await _githubApi.getRepos(userName);
+    setState(() {
+      mUserModel = userModel;
+      mRepos = repos;
       _scaffoldKey.currentState?.showSnackBar(new SnackBar(
           content: const Text('Refresh complete'),
           action: new SnackBarAction(
@@ -66,63 +67,18 @@ class RepoListScreenState extends State<RepoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      key: _scaffoldKey,
-      appBar: new AppBar(
-        title: new Text(
-            mUserModel == null ? 'Github Repo' : '${mUserModel
-                .name} \'s Github Repo'),
-        actions: <Widget>[
-          new IconButton(
-              icon: new CircleAvatar(
-                child: new Image.network(
-                  (mUserModel == null || mUserModel.avatarUrl.isEmpty)
-                      ? 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
-                      : mUserModel.avatarUrl,
-                  width: 20.0,
-                  height: 20.0,
-                ),
-              ),
-              onPressed: null),
-          new IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshIndicatorKey.currentState.show();
-                fetchData(mUserModel.name);
-              }),
-
-        ],
-      ), //appbar
-      body: new RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _handleRefresh,
-        child: new ListView.builder(
-            padding: kMaterialListPadding,
-            itemCount: mRepos.length,
-          itemBuilder: _buildReopItem,
-          /*itemBuilder: (BuildContext context, int index) {
-              final String item = mRepos[index].name;
-              return new ListTile(
-                isThreeLine: false,
-                leading: new CircleAvatar(
-                  child: new Image.network(
-                    'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png',
-                    width: 20.0,
-                    height: 20.0,
-                  ),
-                ),
-                title: new Text(
-                  item,
-                  style: _biggerFont,
-                ),
-              );
-            }*/
-        ),
-
+    return new RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: _handleRefresh,
+      child: new ListView.builder(
+        padding: kMaterialListPadding,
+        itemCount: mRepos.length,
+        itemBuilder: _buildReopItem,
       ),
+
     );
   }
+
 
   _buildReopItem(BuildContext context, int index) {
     final RepoModel repo = mRepos[index];
@@ -150,7 +106,7 @@ class RepoListScreenState extends State<RepoListScreen> {
 
 
   fetchData(String name) {
-    api.getUser(name).then((model) {
+    _githubApi.getUser(name).then((model) {
       setState(() {
         if (model != null) {
           mUserModel = model;
@@ -161,7 +117,7 @@ class RepoListScreenState extends State<RepoListScreen> {
         }
       });
     });
-    api.getRepos(name).then((repoList) {
+    _githubApi.getRepos(name).then((repoList) {
       setState(() {
         if (repoList != null) {
           mRepos = repoList;
@@ -175,13 +131,8 @@ class RepoListScreenState extends State<RepoListScreen> {
   }
 
   _navigateToRepoDetail(RepoModel repo, int index) {
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            settings: const RouteSettings(name: GithubRepoDetail.routeName),
-            builder: (BuildContext context) {
-              return new GithubRepoDetail(repo, index: index);
-            })
-    );
+    Navigator.pushNamed(
+        context, '/repos/${repo.ownerModel.login}/${repo.name}');
   }
 
 

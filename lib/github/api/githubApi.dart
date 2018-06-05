@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:githubdashboard/github/api/client/OauthClient.dart';
+import 'package:githubdashboard/github/constant/Strings.dart';
 import 'package:githubdashboard/github/constant/constant.dart';
+import 'package:githubdashboard/github/model/event.dart';
 import 'package:githubdashboard/github/model/repo.dart';
 import 'package:githubdashboard/github/model/repo_detail.dart';
 import 'package:githubdashboard/github/model/user.dart';
@@ -21,7 +23,7 @@ class GithubApi {
 
 
   static const String KEY_USERNAME = 'KEY_USERNAME';
-//  static const String KEY_PASSWORD = 'KEY_PASSWORD';
+  static const String KEY_PASSWORD = 'KEY_PASSWORD';
   static const String KEY_OAUTH_TOKEN = 'KEY_AUTH_TOKEN';
 
   bool get initialized => _initialized;
@@ -34,6 +36,8 @@ class GithubApi {
 
   String get token => _token;
 
+  String get password => _password;
+
   final String _clientId = CLIENT_ID;
   final String _clientSecret = CLIENT_SECRET;
   final Client _client = new Client();
@@ -42,6 +46,7 @@ class GithubApi {
   bool _initialized;
   bool _loggedIn;
   String _username;
+  String _password;
   String _token;
   OauthClient _oauthClient;
 
@@ -51,6 +56,7 @@ class GithubApi {
   Future init() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String username = preferences.getString(KEY_USERNAME);
+    String password = preferences.getString(KEY_PASSWORD);
     String oauthToken = preferences.getString(KEY_OAUTH_TOKEN);
     if (username == null || oauthToken == null) {
       _loggedIn = false;
@@ -58,6 +64,7 @@ class GithubApi {
     } else {
       _loggedIn = true;
       _username = username;
+      _password = password;
       _token = oauthToken;
       _oauthClient = new OauthClient(_client, oauthToken);
     }
@@ -85,7 +92,7 @@ class GithubApi {
     if (loginResponse.statusCode == 201) {
       final bodyJson = JSON.decode(loginResponse.body);
       final name = await _getUserName(bodyJson['token']);
-      await _saveTokens(name, bodyJson['token']);
+      await _saveTokens(name, password, bodyJson['token']);
       _loggedIn = true;
     } else {
       _loggedIn = false;
@@ -117,6 +124,17 @@ class GithubApi {
     return new RepoDetailModel.fromJson(decodedJSON);
   }
 
+  Future<List<EventModel>> getFeeds(String username,
+      [int pageIndex = 1]) async {
+    var url = '$BASE_URL/users/$username/received_events?page=$pageIndex';
+    var decodedJSON = await _getDecodedJson(url);
+    List<EventModel> eventList = new List<EventModel>();
+    for (var repoJSON in decodedJSON) {
+      eventList.add(new EventModel.fromJson(repoJSON));
+    }
+    return eventList;
+  }
+
 
   Future _getDecodedJson(String url) async {
     var uri = Uri.parse(url);
@@ -136,10 +154,12 @@ class GithubApi {
     return BASE64.encode(authorizationBytes);
   }
 
-  Future _saveTokens(String username, String oauthToken) async {
+  Future _saveTokens(String username, String password,
+      String oauthToken) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString(KEY_USERNAME, username);
     preferences.setString(KEY_OAUTH_TOKEN, oauthToken);
+    preferences.setString(KEY_PASSWORD, password);
     await preferences.commit();
     _username = username;
     _oauthClient = new OauthClient(_client, oauthToken);
@@ -147,14 +167,28 @@ class GithubApi {
   }
 
   Future logout() async {
-    await _saveTokens(null, null);
+    await _saveTokens(null, null, null);
     _loggedIn = false;
   }
 
-  Future _getUserName(bodyJson) async{
-    var url ='$BASE_URL/user?access_token=$bodyJson';
+  Future _getUserName(bodyJson) async {
+    var url = '$BASE_URL/user?access_token=$bodyJson';
     Map<String, dynamic> decodedJSON = await _getDecodedJson(url);
     return decodedJSON['login'];
+  }
+
+  Future getReadme(String name, String repoName,
+      [String defalutBranch = "master"]) async {
+    var url = '$README_URL_PREFIX/$name/$repoName/$defalutBranch/README.md';
+    var uri = Uri.parse(url);
+    var request = await httpClient.getUrl(uri);
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(UTF8.decoder).join();
+      return json;
+    } else {
+      return Strings.ERROR_GENERAL_README;
+    }
   }
 
 }
