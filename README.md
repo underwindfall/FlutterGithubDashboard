@@ -14,12 +14,13 @@ For help getting started with Flutter, view our online
 
 
 ### Repository List && Detail && Event
-![Repos](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg){:height="50%" width="50%"} 
-![Repo Detail](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg){:height="50%" width="50%"}
-![Event](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg){:height="50%" width="50%"}
+<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg" width="200px" />
+<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg" width="200px" />
+<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg" width="200px" />
+
 
 ### Error
-![Error](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/error.jpg){:height="50%" width="50%"}
+<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/error.jpg" width="200px" />
 
 ## Support 
 
