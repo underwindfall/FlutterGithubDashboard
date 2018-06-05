@@ -10,13 +10,15 @@ For help getting started with Flutter, view our online
 ## ScreenShots
 
 ### Login
-![Login](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/login.jpg)
+![Login](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/login.jpg){:height="50%" width="50%"}
 
 ### Repository List && Detail && Event
-![Repos](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg) ![Repo Detail](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg)![Event](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg)
+![Repos](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg){:height="50%" width="50%"} 
+![Repo Detail](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg){:height="50%" width="50%"}
+![Event](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg){:height="50%" width="50%"}
 
 ### Error
-![Error](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/error.jpg)
+![Error](https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/error.jpg){:height="50%" width="50%"}
 
 ## Support 
 
