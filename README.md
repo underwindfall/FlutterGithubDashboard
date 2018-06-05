@@ -14,9 +14,7 @@ For help getting started with Flutter, view our online
 
 
 ### Repository List && Detail && Event
-<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg" width="200px" />
-<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg" width="200px" />
-<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg" width="200px" />
+<img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repos.jpg" width="200px" /><img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/repo_detail.jpg" width="200px" /><img src="https://github.com/underwindfall/FlutterGithubDashboard/blob/develop/art/events.jpg" width="200px" />
 
 
 ### Error
